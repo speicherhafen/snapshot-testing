@@ -1,0 +1,12 @@
+{
+    "name": "kigaroo/snapshot-testing",
+    "description": "Provides PHPUnit assertions for snapshot testing",
+    "type": "library",
+    "require": {
+        "symfony/filesystem": "^2.8",
+        "php": "^7.1",
+        "phpunit/phpunit": "~6.5"
+    },
+    "license": "MIT",
+    "minimum-stability": "stable"
+}
