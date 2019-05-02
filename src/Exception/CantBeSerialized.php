@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace KigaRoo\Exceptions;
+namespace KigaRoo\Exception;
 
 use Exception;
 

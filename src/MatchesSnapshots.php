@@ -8,39 +8,39 @@ use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\ExpectationFailedException;
 use ReflectionClass;
 use ReflectionObject;
-use KigaRoo\Drivers\JsonDriver;
+use KigaRoo\Driver\JsonDriver;
 
 trait MatchesSnapshots
 {
-    /**
-     * @var int
+    /** 
+     * @var int 
      */
     protected $snapshotIncrementor;
 
-    /**
-     * @var string[]
+    /** 
+     * @var string[] 
      */
     protected $snapshotChanges;
 
-    /**
-     * @before
+    /** 
+     * @before 
      */
     public function setUpSnapshotIncrementor(): void
     {
         $this->snapshotIncrementor = 0;
     }
 
-    /**
-     * @after
+    /** 
+     * @after 
      */
-    public function markTestIncompleteIfSnapshotsHaveChanged():? string
+    public function markTestIncompleteIfSnapshotsHaveChanged():?  string
     {
         if (empty($this->snapshotChanges)) {
             return null;
         }
 
         if (count($this->snapshotChanges) === 1) {
-            Assert::markTestIncomplete($this->snapshotChanges[0]);
+            $this->markTestIncomplete($this->snapshotChanges[0]);
 
             return null;
         }
@@ -52,9 +52,9 @@ trait MatchesSnapshots
         Assert::markTestIncomplete($formattedMessages);
     }
 
-    public function assertMatchesJsonSnapshot(string $actual): void
+    public function assertMatchesJsonSnapshot(string $actual, ?array $fieldConstraints = null): void
     {
-        $this->doSnapshotAssertion($actual, new JsonDriver());
+        $this->doSnapshotAssertion($actual, new JsonDriver(), $fieldConstraints);
     }
 
     /**
@@ -92,7 +92,7 @@ trait MatchesSnapshots
         return in_array('--update-snapshots', $_SERVER['argv'], true);
     }
 
-    protected function doSnapshotAssertion(string $actual, Driver $driver): void
+    protected function doSnapshotAssertion(string $actual, Driver $driver, ?array $fieldConstraints = null): void
     {
         $this->snapshotIncrementor++;
 
@@ -103,7 +103,7 @@ trait MatchesSnapshots
         );
 
         if (! $snapshot->exists()) {
-            $this->createSnapshotAndMarkTestIncomplete($snapshot, $actual);
+            $this->createSnapshotAndMarkTestIncomplete($snapshot, $actual, $fieldConstraints);
         }
 
         if ($this->shouldUpdateSnapshots()) {
@@ -111,29 +111,29 @@ trait MatchesSnapshots
                 // We only want to update snapshots which need updating. If the snapshot doesn't
                 // match the expected output, we'll catch the failure, create a new snapshot and
                 // mark the test as incomplete.
-                $snapshot->assertMatches($actual);
+                $snapshot->assertMatches($actual, $fieldConstraints);
             } catch (ExpectationFailedException $exception) {
-                $this->updateSnapshotAndMarkTestIncomplete($snapshot, $actual);
+                $this->updateSnapshotAndMarkTestIncomplete($snapshot, $actual, $fieldConstraints);
             }
         }
 
         try {
-            $snapshot->assertMatches($actual);
+            $snapshot->assertMatches($actual, $fieldConstraints);
         } catch (ExpectationFailedException $exception) {
             $this->rethrowExpectationFailedExceptionWithUpdateSnapshotsPrompt($exception);
         }
     }
 
-    protected function createSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual): void
+    protected function createSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual, ?array $fieldConstraints = null): void
     {
-        $snapshot->create($actual);
+        $snapshot->create($actual, $fieldConstraints);
 
         $this->registerSnapshotChange("Snapshot created for {$snapshot->id()}");
     }
 
-    protected function updateSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual): void
+    protected function updateSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual, ?array $fieldConstraints = null): void
     {
-        $snapshot->create($actual);
+        $snapshot->create($actual, $fieldConstraints);
 
         $this->registerSnapshotChange("Snapshot updated for {$snapshot->id()}");
     }

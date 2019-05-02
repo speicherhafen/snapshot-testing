@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace KigaRoo;
 
-use KigaRoo\Exceptions\CantBeSerialized;
-
 final class Snapshot
 {
     /**
@@ -65,13 +63,13 @@ final class Snapshot
         return $this->filesystem->has($this->filename());
     }
 
-    public function assertMatches(string $actual)
+    public function assertMatches(string $actual, ?array $fieldConstraints = null)
     {
-        $this->driver->match($this->filesystem->read($this->filename()), $actual);
+        $this->driver->match($this->filesystem->read($this->filename()), $actual, $fieldConstraints);
     }
 
-    public function create(string $actual): void
+    public function create(string $actual, ?array $fieldConstraints = null): void
     {
-        $this->filesystem->put($this->filename(), $this->driver->serialize($actual));
+        $this->filesystem->put($this->filename(), $this->driver->serialize($actual, $fieldConstraints));
     }
 }

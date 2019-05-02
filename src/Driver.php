@@ -10,7 +10,7 @@ interface Driver
      * Serialize a snapshot's data to a string that can be written to a
      * generated snapshot file.
      */
-    public function serialize(string $data): string;
+    public function serialize(string $decodedJson, ?array $fieldConstraints = null): string;
 
     /**
      * The extension that should be used to save the snapshot file, without
@@ -25,5 +25,5 @@ interface Driver
      *
      * @throws \PHPUnit\Framework\ExpectationFailedException
      */
-    public function match(string $expected, string $actual);
+    public function match(string $expected, string $actual, ?array $fieldConstraints = null);
 }
