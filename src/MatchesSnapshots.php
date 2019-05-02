@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KigaRoo;
 
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\ExpectationFailedException;
 use ReflectionClass;
 use ReflectionObject;
@@ -11,35 +12,35 @@ use KigaRoo\Drivers\JsonDriver;
 
 trait MatchesSnapshots
 {
-    /** 
-     * @var int 
+    /**
+     * @var int
      */
     protected $snapshotIncrementor;
 
-    /** 
-     * @var string[] 
+    /**
+     * @var string[]
      */
     protected $snapshotChanges;
 
-    /** 
-     * @before 
+    /**
+     * @before
      */
     public function setUpSnapshotIncrementor(): void
     {
         $this->snapshotIncrementor = 0;
     }
 
-    /** 
-     * @after 
+    /**
+     * @after
      */
-    public function markTestIncompleteIfSnapshotsHaveChanged():?  string
+    public function markTestIncompleteIfSnapshotsHaveChanged():? string
     {
         if (empty($this->snapshotChanges)) {
             return null;
         }
 
         if (count($this->snapshotChanges) === 1) {
-            $this->markTestIncomplete($this->snapshotChanges[0]);
+            Assert::markTestIncomplete($this->snapshotChanges[0]);
 
             return null;
         }
@@ -48,7 +49,7 @@ trait MatchesSnapshots
             return "- {$message}";
         }, $this->snapshotChanges));
 
-        $this->markTestIncomplete($formattedMessages);
+        Assert::markTestIncomplete($formattedMessages);
     }
 
     public function assertMatchesJsonSnapshot(string $actual): void
@@ -59,8 +60,6 @@ trait MatchesSnapshots
     /**
      * Determines the snapshot's id. By default, the test case's class and
      * method names are used.
-     *
-     * @return string
      */
     protected function getSnapshotId(): string
     {
@@ -73,8 +72,6 @@ trait MatchesSnapshots
      * Determines the directory where snapshots are stored. By default a
      * `__snapshots__` directory is created at the same level as the test
      * class.
-     *
-     * @return string
      */
     protected function getSnapshotDirectory(): string
     {
@@ -89,8 +86,6 @@ trait MatchesSnapshots
      *
      * Override this method it you want to use a different flag or mechanism
      * than `-d --update-snapshots`.
-     *
-     * @return bool
      */
     protected function shouldUpdateSnapshots(): bool
     {
