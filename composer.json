@@ -2,9 +2,18 @@
     "name": "kigaroo/snapshot-testing",
     "description": "Provides PHPUnit assertions for snapshot testing",
     "type": "library",
+    "autoload": {
+        "psr-4": {
+            "KigaRoo\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": { "Tests\\": ["tests/unit"] }
+    },
     "require": {
         "symfony/filesystem": "^2.8",
         "php": "^7.1",
+        "ext-json": "*",
         "phpunit/phpunit": "~6.5"
     },
     "license": "MIT",
