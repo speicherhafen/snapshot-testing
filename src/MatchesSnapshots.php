@@ -33,16 +33,16 @@ trait MatchesSnapshots
     /**
      * @after
      */
-    public function markTestIncompleteIfSnapshotsHaveChanged(): ?string
+    public function markTestIncompleteIfSnapshotsHaveChanged(): void
     {
         if (empty($this->snapshotChanges)) {
-            return null;
+            return;
         }
 
         if (count($this->snapshotChanges) === 1) {
             Assert::markTestIncomplete($this->snapshotChanges[0]);
 
-            return null;
+            return;
         }
 
         $formattedMessages = implode(PHP_EOL, array_map(function (string $message) {
@@ -56,6 +56,8 @@ trait MatchesSnapshots
     {
         $this->doSnapshotAssertion($actual, new JsonDriver(), $fieldConstraints);
     }
+
+    abstract public function getName($withDataSet = true);
 
     /**
      * Determines the snapshot's id. By default, the test case's class and
