@@ -21,6 +21,6 @@
         "phpunit/phpunit": "~6.5",
         "symfony/filesystem": "^2.8",
         "symfony/property-access": "^2.7",
-        "webmozart/assert": "^1.4"
+        "webmozart/assert": "1.2"
     }
 }
