@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace KigaRoo\Constraint;
 
+use Webmozart\Assert\Assert;
+
 final class UuidConstraint implements Constraint
 {
     /**
@@ -25,6 +27,16 @@ final class UuidConstraint implements Constraint
     {
         return 'uuid';
     }
-    
-    
+
+    public function match($mixed): bool
+    {
+        try {
+            Assert::uuid($mixed);
+            return true;
+        }
+        catch(\InvalidArgumentException $exception)
+        {
+            return false;
+        }
+    }
 }

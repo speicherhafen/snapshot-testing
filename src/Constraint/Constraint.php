@@ -8,4 +8,5 @@ interface Constraint
 {
     public function toString(): string;
     public function getPath(): string;
+    public function match($mixed): bool;
 }
