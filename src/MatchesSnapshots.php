@@ -134,16 +134,20 @@ trait MatchesSnapshots
 
     private function createSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual, ?array $fieldConstraints = null): void
     {
+        $snapshot->update($actual, $fieldConstraints);
+
         $snapshotFactory = new SnapshotHandler(new Filesystem($this->getSnapshotDirectory()));
-        $snapshotFactory->writeToFilesystem($snapshot, $actual, $fieldConstraints);
+        $snapshotFactory->writeToFilesystem($snapshot);
 
         $this->registerSnapshotChange(sprintf('Snapshot created for %s', $snapshot->getId()));
     }
 
     private function updateSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual, ?array $fieldConstraints = null): void
     {
+        $snapshot->update($actual, $fieldConstraints);
+
         $snapshotFactory = new SnapshotHandler(new Filesystem($this->getSnapshotDirectory()));
-        $snapshotFactory->writeToFilesystem($snapshot, $actual, $fieldConstraints);
+        $snapshotFactory->writeToFilesystem($snapshot);
 
         $this->registerSnapshotChange(sprintf('Snapshot updated for %s', $snapshot->getId()));
     }

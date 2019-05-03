@@ -21,9 +21,8 @@ final class SnapshotHandler
         return $this->filesystem->has($this->getFilename($snapshot->getId(), $snapshot->getDriver()));
     }
 
-    public function writeToFilesystem(Snapshot $snapshot, string $actual, ?array $fieldConstraints = null): void
+    public function writeToFilesystem(Snapshot $snapshot): void
     {
-        $snapshot->update($actual, $fieldConstraints);
         $this->filesystem->put($this->getFilename($snapshot->getId(), $snapshot->getDriver()), $snapshot->getContent());
     }
 
