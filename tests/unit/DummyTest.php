@@ -35,6 +35,10 @@ class DummyTest extends TestCase
                      ['id' => 123],
                      ['id' => 234],
                      ['id' => 345],
+                 ],
+                 'arrays' => [
+                     [1,2,3],
+                     [3,4,5],
                  ]
              ],
             ]
@@ -43,8 +47,9 @@ class DummyTest extends TestCase
         $fieldConstraints = [
             new UuidReplacement('tests.id'),
             new IntegerReplacement('tests.multiple[1]'),
-        //            new IntegerReplacement('tests.ints[*][0]'),
-            new IntegerReplacement('tests.objects[*]id'), // implemented
+            new IntegerReplacement('tests.ints[*]'),
+            new IntegerReplacement('tests.objects[*].id'), // implemented
+            new IntegerReplacement('tests.arrays[*][2]'), // implemented
         ];
 
         $this->assertMatchesJsonSnapshot($data, $fieldConstraints);

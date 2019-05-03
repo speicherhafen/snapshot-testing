@@ -22,7 +22,7 @@ final class Accessor
         $paths = explode('[*]', $replacement->atPath());
 
         if(count($paths) > 2) {
-            throw new \Exception('adsasda');
+            throw new InvalidConstraintPath($replacement->atPath());
         }
         
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
@@ -41,9 +41,26 @@ final class Accessor
 
         foreach($elements as $element)
         {
-            $this->assert($replacement, $this->getValue($element, $paths[1]));
-            
-            $propertyAccessor->setValue($element, $paths[1], $replacement->getValue());
+            if('' === $paths[1])
+            {
+                $this->assert($replacement, $element);
+                $element = $replacement->getValue();
+            }
+            elseif('.' === $paths[1]{0})
+            {
+                $subPath = substr($paths[1],1);
+                $this->assert($replacement, $this->getValue($element, $subPath));
+                $propertyAccessor->setValue($element, $subPath, $replacement->getValue());
+            }
+            elseif(preg_match('#^\[[0-9]+\]#', $paths[1]))
+            {
+                $this->assert($replacement, $this->getValue($element, $paths[1]));
+                $propertyAccessor->setValue($element, $paths[1], $replacement->getValue());
+            }
+            else
+            {
+                throw new InvalidConstraintPath($replacement->atPath());
+            }
             $modifiedElements[] = $element;
 
         }
@@ -67,7 +84,7 @@ final class Accessor
         }
         catch (NoSuchPropertyException $exception)
         {
-            throw new InvalidConstraintPath($path());
+            throw new InvalidConstraintPath($path);
         }
     }
 
