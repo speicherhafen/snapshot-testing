@@ -44,7 +44,7 @@ final class Snapshot
         return $this->id;
     }
 
-    public function assertMatches(string $actual, ?array $fieldConstraints = null)
+    public function assertMatches(string $actual, array $fieldConstraints = [])
     {
         $this->driver->match($this->content, $actual, $fieldConstraints);
     }
@@ -59,7 +59,7 @@ final class Snapshot
         return $this->content;
     }
 
-    public function update(string $actual, ?array $fieldConstraints = null): void
+    public function update(string $actual, array $fieldConstraints = []): void
     {
         $this->content = $this->driver->serialize($actual, $fieldConstraints);
     }
