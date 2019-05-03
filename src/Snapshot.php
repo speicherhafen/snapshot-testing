@@ -7,69 +7,50 @@ namespace KigaRoo;
 final class Snapshot
 {
     /**
-     * @var string 
+     * @var string
      */
     private $id;
 
     /**
-     * @var Filesystem 
+     * @var string
      */
-    private $filesystem;
+    private $content;
 
     /**
-     * @var \KigaRoo\Driver 
+     * @var \KigaRoo\Driver
      */
     private $driver;
 
-    public function __construct(
+    private function __construct(
         string $id,
-        Filesystem $filesystem,
+        string $content,
         Driver $driver
     ) {
         $this->id = $id;
-        $this->filesystem = $filesystem;
         $this->driver = $driver;
+        $this->content = $content;
     }
 
     public static function forTestCase(
         string $id,
-        string $directory,
+        string $content,
         Driver $driver
     ): self {
-        $filesystem = Filesystem::inDirectory($directory);
-
-        return new self($id, $filesystem, $driver);
+        return new self($id, $content, $driver);
     }
 
-    public function id(): string
+    public function getId(): string
     {
         return $this->id;
     }
 
-    public function filename(): string
-    {
-        $file = $this->id.'.'.$this->driver->extension();
-        // Remove anything which isn't a word, whitespace, number
-        // or any of the following caracters -_~,;[]().
-        $file = preg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $file);
-        // Remove any runs of periods
-        $file = preg_replace("([\.]{2,})", '', $file);
-
-        return $file;
-    }
-
-    public function exists(): bool
-    {
-        return $this->filesystem->has($this->filename());
-    }
-
     public function assertMatches(string $actual, ?array $fieldConstraints = null)
     {
-        $this->driver->match($this->filesystem->read($this->filename()), $actual, $fieldConstraints);
+        $this->driver->match($this->content, $actual, $fieldConstraints);
     }
 
-    public function create(string $actual, ?array $fieldConstraints = null): void
+    public function getDriver(): Driver
     {
-        $this->filesystem->put($this->filename(), $this->driver->serialize($actual, $fieldConstraints));
+        return $this->driver;
     }
 }

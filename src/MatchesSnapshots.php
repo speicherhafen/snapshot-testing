@@ -101,13 +101,16 @@ trait MatchesSnapshots
     {
         $this->snapshotIncrementor++;
 
+        $filesystem = new Filesystem($this->getSnapshotDirectory());
+        $snapshotHandler = new SnapshotHandler($filesystem);
+
         $snapshot = Snapshot::forTestCase(
             $this->getSnapshotId(),
-            $this->getSnapshotDirectory(),
+            $filesystem->read($snapshotHandler->getFilename($this->getSnapshotId(), $driver)),
             $driver
         );
 
-        if (!$snapshot->exists()) {
+        if (!$snapshotHandler->snapshotExists($snapshot)) {
             $this->createSnapshotAndMarkTestIncomplete($snapshot, $actual, $fieldConstraints);
         }
 
@@ -131,16 +134,18 @@ trait MatchesSnapshots
 
     private function createSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual, ?array $fieldConstraints = null): void
     {
-        $snapshot->create($actual, $fieldConstraints);
+        $snapshotFactory = new SnapshotHandler(new Filesystem($this->getSnapshotDirectory()));
+        $snapshotFactory->writeToFilesystem($snapshot, $actual, $fieldConstraints);
 
-        $this->registerSnapshotChange(sprintf('Snapshot created for %s', $snapshot->id()));
+        $this->registerSnapshotChange(sprintf('Snapshot created for %s', $snapshot->getId()));
     }
 
     private function updateSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual, ?array $fieldConstraints = null): void
     {
-        $snapshot->create($actual, $fieldConstraints);
+        $snapshotFactory = new SnapshotHandler(new Filesystem($this->getSnapshotDirectory()));
+        $snapshotFactory->writeToFilesystem($snapshot, $actual, $fieldConstraints);
 
-        $this->registerSnapshotChange(sprintf('Snapshot updated for %s', $snapshot->id()));
+        $this->registerSnapshotChange(sprintf('Snapshot updated for %s', $snapshot->getId()));
     }
 
     private function rethrowExpectationFailedExceptionWithUpdateSnapshotsPrompt(ExpectationFailedException $exception): void
