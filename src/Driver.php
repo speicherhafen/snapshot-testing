@@ -25,5 +25,5 @@ interface Driver
      *
      * @throws \PHPUnit\Framework\ExpectationFailedException
      */
-    public function match(string $expected, string $actual, array $fieldConstraints = []);
+    public function match(string $expected, string $actual, array $fieldConstraints = []): void;
 }

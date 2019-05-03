@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace KigaRoo\Constraint;
+namespace KigaRoo\Replacement;
 
 use Webmozart\Assert\Assert;
 
-final class UuidConstraint implements Constraint
+final class UuidReplacement implements Replacement
 {
     /**
      * @var string 
@@ -18,14 +18,14 @@ final class UuidConstraint implements Constraint
         $this->path = $path;
     }
 
-    public function getPath(): string
+    public function atPath(): string
     {
         return $this->path;
     }
 
     public function toString(): string
     {
-        return 'uuid';
+        return 'b84c9b7f-1ebb-49b6-9d18-4305932b2dd1';
     }
 
     public function match($mixed): bool

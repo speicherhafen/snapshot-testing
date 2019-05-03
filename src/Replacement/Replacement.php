@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace KigaRoo\Constraint;
+namespace KigaRoo\Replacement;
 
-interface Constraint 
+interface Replacement 
 {
     public function toString(): string;
-    public function getPath(): string;
+    public function atPath(): string;
     public function match($mixed): bool;
 }

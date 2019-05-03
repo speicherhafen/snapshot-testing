@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace KigaRoo\Driver;
 
-use KigaRoo\Exception\ConstraintPathException;
+use KigaRoo\Replacement\Replacement;
+use KigaRoo\Exception\ConstraintDoesNotMatch;
+use KigaRoo\Exception\InvalidConstraintPath;
 use PHPUnit\Framework\Assert;
 use KigaRoo\Driver;
-use KigaRoo\Constraint\Constraint;
 use KigaRoo\Exception\CantBeSerialized;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -28,7 +29,7 @@ final class JsonDriver implements Driver
         return 'json';
     }
 
-    public function match(string $expected, string $actual, array $fieldConstraints = [])
+    public function match(string $expected, string $actual, array $fieldConstraints = []): void
     {
         $actualArray = $this->decode($actual);
         $actualArray = $this->replaceFieldsWithConstraintExpression($actualArray, $fieldConstraints);
@@ -38,33 +39,51 @@ final class JsonDriver implements Driver
     }
 
     /**
-     * @param Constraint[] $fieldConstraints
+     * @param $actualStringOrObjectOrArray string|\stdClass|array
+     * @param Replacement[] $fieldConstraints
+     * @return string|\stdClass|array
+     * @throws ConstraintDoesNotMatch
+     * @throws InvalidConstraintPath
      */
-    private function replaceFieldsWithConstraintExpression(array $actual, array $fieldConstraints) {
+    private function replaceFieldsWithConstraintExpression($actualStringOrObjectOrArray, array $fieldConstraints)
+    {
 
-
+        if(is_string($actualStringOrObjectOrArray)) {
+            return $actualStringOrObjectOrArray;
+        }
+        
         foreach($fieldConstraints as $fieldConstraint)
         {
             $propertyAccessor = PropertyAccess::createPropertyAccessor();
 
             try {
-                $value = $propertyAccessor->getValue($actual, $fieldConstraint->getPath());
+                $value = $propertyAccessor->getValue($actualStringOrObjectOrArray, $fieldConstraint->atPath());
+                
             }
             catch (NoSuchPropertyException $exception)
             {
-                throw new ConstraintPathException($fieldConstraint->getPath());
+                throw new InvalidConstraintPath($fieldConstraint->atPath());
             }
-
-            //@todo: replace data with constraint->toString()
+            
+            if(!$fieldConstraint->match($value)) {
+                throw new ConstraintDoesNotMatch(get_class($fieldConstraint), $fieldConstraint->atPath());
+            }
+            $propertyAccessor->setValue($actualStringOrObjectOrArray, $fieldConstraint->atPath(), $fieldConstraint->toString());
         }
+        
+        return $actualStringOrObjectOrArray;
     }
 
-    private function decode(string $data): array
+    /**
+     * @param  string $data
+     * @return string|object|array
+     * @throws CantBeSerialized
+     */
+    private function decode(string $data) 
     {
-        $data = json_decode($data, true);
+        $data = json_decode($data);
 
-        if(false === $data)
-        {
+        if(false === $data) {
             throw new CantBeSerialized('not a valid json string.');
         }
 
