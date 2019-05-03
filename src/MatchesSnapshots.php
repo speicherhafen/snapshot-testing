@@ -20,7 +20,7 @@ trait MatchesSnapshots
     /**
      * @var string[]
      */
-    private $snapshotChanges;
+    private $snapshotChanges = [];
 
     /**
      * @before
