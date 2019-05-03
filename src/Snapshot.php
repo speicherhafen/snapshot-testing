@@ -61,6 +61,6 @@ final class Snapshot
 
     public function update(string $actual, ?array $fieldConstraints = null): void
     {
-        $this->driver->serialize($actual, $fieldConstraints);
+        $this->content = $this->driver->serialize($actual, $fieldConstraints);
     }
 }
