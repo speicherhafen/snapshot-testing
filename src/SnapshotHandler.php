@@ -23,7 +23,8 @@ final class SnapshotHandler
 
     public function writeToFilesystem(Snapshot $snapshot, string $actual, ?array $fieldConstraints = null): void
     {
-        $this->filesystem->put($this->getFilename($snapshot->getId(), $snapshot->getDriver()), $snapshot->getDriver()->serialize($actual, $fieldConstraints));
+        $snapshot->update($actual, $fieldConstraints);
+        $this->filesystem->put($this->getFilename($snapshot->getId(), $snapshot->getDriver()), $snapshot->getContent());
     }
 
     public function getFilename(string $snapshotId, Driver $driver): string

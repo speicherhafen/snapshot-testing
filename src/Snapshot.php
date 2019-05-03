@@ -53,4 +53,14 @@ final class Snapshot
     {
         return $this->driver;
     }
+
+    public function getContent(): string
+    {
+        return $this->content;
+    }
+
+    public function update(string $actual, ?array $fieldConstraints = null): void
+    {
+        $this->driver->serialize($actual, $fieldConstraints);
+    }
 }
