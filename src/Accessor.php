@@ -48,7 +48,7 @@ final class Accessor
             }
             elseif('.' === $paths[1]{0})
             {
-                $subPath = substr($paths[1],1);
+                $subPath = mb_substr($paths[1],1);
                 $this->assert($replacement, $this->getValue($element, $subPath));
                 $propertyAccessor->setValue($element, $subPath, $replacement->getValue());
             }
