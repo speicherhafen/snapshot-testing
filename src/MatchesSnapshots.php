@@ -15,12 +15,12 @@ trait MatchesSnapshots
     /**
      * @var int
      */
-    protected $snapshotIncrementor;
+    private $snapshotIncrementor;
 
     /**
      * @var string[]
      */
-    protected $snapshotChanges;
+    private $snapshotChanges;
 
     /**
      * @before
@@ -35,7 +35,7 @@ trait MatchesSnapshots
      */
     public function markTestIncompleteIfSnapshotsHaveChanged(): void
     {
-        if (empty($this->snapshotChanges)) {
+        if (count($this->snapshotChanges) === 0) {
             return;
         }
 
@@ -45,11 +45,11 @@ trait MatchesSnapshots
             return;
         }
 
-        $formattedMessages = implode(PHP_EOL, array_map(function (string $message) {
-            return "- {$message}";
-        }, $this->snapshotChanges));
+        $formattedMessages = array_map(static function (string $message) {
+            return '- ' . $message;
+        }, $this->snapshotChanges);
 
-        Assert::markTestIncomplete($formattedMessages);
+        Assert::markTestIncomplete(implode(PHP_EOL, $formattedMessages));
     }
 
     public function assertMatchesJsonSnapshot(string $actual, ?array $fieldConstraints = null): void
@@ -63,7 +63,7 @@ trait MatchesSnapshots
      * Determines the snapshot's id. By default, the test case's class and
      * method names are used.
      */
-    protected function getSnapshotId(): string
+    private function getSnapshotId(): string
     {
         return (new ReflectionClass($this))->getShortName() . '__' .
             $this->getName() . '__' .
@@ -75,11 +75,11 @@ trait MatchesSnapshots
      * `__snapshots__` directory is created at the same level as the test
      * class.
      */
-    protected function getSnapshotDirectory(): string
+    private function getSnapshotDirectory(): string
     {
-        return dirname((new ReflectionClass($this))->getFileName()) .
-            DIRECTORY_SEPARATOR .
-            '__snapshots__';
+        $directoryName = dirname((new ReflectionClass($this))->getFileName());
+
+        return sprintf('%s%s__snapshots__', $directoryName, DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -89,12 +89,12 @@ trait MatchesSnapshots
      * Override this method it you want to use a different flag or mechanism
      * than `-d --update-snapshots`.
      */
-    protected function shouldUpdateSnapshots(): bool
+    private function shouldUpdateSnapshots(): bool
     {
         return in_array('--update-snapshots', $_SERVER['argv'], true);
     }
 
-    protected function doSnapshotAssertion(string $actual, Driver $driver, ?array $fieldConstraints = null): void
+    private function doSnapshotAssertion(string $actual, Driver $driver, ?array $fieldConstraints = null): void
     {
         $this->snapshotIncrementor++;
 
@@ -104,7 +104,7 @@ trait MatchesSnapshots
             $driver
         );
 
-        if (! $snapshot->exists()) {
+        if (!$snapshot->exists()) {
             $this->createSnapshotAndMarkTestIncomplete($snapshot, $actual, $fieldConstraints);
         }
 
@@ -126,25 +126,28 @@ trait MatchesSnapshots
         }
     }
 
-    protected function createSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual, ?array $fieldConstraints = null): void
+    private function createSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual, ?array $fieldConstraints = null): void
     {
         $snapshot->create($actual, $fieldConstraints);
 
-        $this->registerSnapshotChange("Snapshot created for {$snapshot->id()}");
+        $this->registerSnapshotChange(sprintf('Snapshot created for %s', $snapshot->id()));
     }
 
-    protected function updateSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual, ?array $fieldConstraints = null): void
+    private function updateSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual, ?array $fieldConstraints = null): void
     {
         $snapshot->create($actual, $fieldConstraints);
 
-        $this->registerSnapshotChange("Snapshot updated for {$snapshot->id()}");
+        $this->registerSnapshotChange(sprintf('Snapshot updated for %s', $snapshot->id()));
     }
 
-    protected function rethrowExpectationFailedExceptionWithUpdateSnapshotsPrompt(ExpectationFailedException $exception): void
+    private function rethrowExpectationFailedExceptionWithUpdateSnapshotsPrompt(ExpectationFailedException $exception): void
     {
-        $newMessage = $exception->getMessage() . "\n\n" .
-            'Snapshots can be updated by passing ' .
-            '`-d --update-snapshots` through PHPUnit\'s CLI arguments.';
+        $newMessage = sprintf(
+            '%s%s%s',
+            $exception->getMessage(),
+            PHP_EOL . PHP_EOL,
+            'Snapshots can be updated by passing `-d --update-snapshots` through PHPUnit\'s CLI arguments.'
+        );
 
         $exceptionReflection = new ReflectionObject($exception);
 
@@ -155,7 +158,7 @@ trait MatchesSnapshots
         throw $exception;
     }
 
-    protected function registerSnapshotChange(string $message): void
+    private function registerSnapshotChange(string $message): void
     {
         $this->snapshotChanges[] = $message;
     }
