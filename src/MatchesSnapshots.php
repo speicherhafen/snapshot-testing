@@ -65,9 +65,12 @@ trait MatchesSnapshots
      */
     private function getSnapshotId(): string
     {
-        return (new ReflectionClass($this))->getShortName() . '__' .
-            $this->getName() . '__' .
-            $this->snapshotIncrementor;
+        return sprintf(
+            '%s__%s__%s',
+            (new ReflectionClass($this))->getShortName(),
+            $this->getName(),
+            $this->snapshotIncrementor
+        );
     }
 
     /**
