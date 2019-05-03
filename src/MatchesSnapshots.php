@@ -12,35 +12,35 @@ use KigaRoo\Driver\JsonDriver;
 
 trait MatchesSnapshots
 {
-    /** 
-     * @var int 
+    /**
+     * @var int
      */
     protected $snapshotIncrementor;
 
-    /** 
-     * @var string[] 
+    /**
+     * @var string[]
      */
     protected $snapshotChanges;
 
-    /** 
-     * @before 
+    /**
+     * @before
      */
     public function setUpSnapshotIncrementor(): void
     {
         $this->snapshotIncrementor = 0;
     }
 
-    /** 
-     * @after 
+    /**
+     * @after
      */
-    public function markTestIncompleteIfSnapshotsHaveChanged():?  string
+    public function markTestIncompleteIfSnapshotsHaveChanged(): ?string
     {
         if (empty($this->snapshotChanges)) {
             return null;
         }
 
         if (count($this->snapshotChanges) === 1) {
-            $this->markTestIncomplete($this->snapshotChanges[0]);
+            Assert::markTestIncomplete($this->snapshotChanges[0]);
 
             return null;
         }
