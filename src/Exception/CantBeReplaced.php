@@ -6,7 +6,7 @@ namespace KigaRoo\Exception;
 
 use Exception;
 
-final class CannotBeReplaced extends Exception
+final class CantBeReplaced extends Exception
 {
     public function __construct(string $constraint, string $path)
     {
