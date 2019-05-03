@@ -52,7 +52,7 @@ trait MatchesSnapshots
         Assert::markTestIncomplete(implode(PHP_EOL, $formattedMessages));
     }
 
-    public function assertMatchesJsonSnapshot(string $actual, ?array $fieldConstraints = null): void
+    public function assertMatchesJsonSnapshot(string $actual, array $fieldConstraints = []): void
     {
         $this->doSnapshotAssertion($actual, new JsonDriver(), $fieldConstraints);
     }
@@ -97,7 +97,7 @@ trait MatchesSnapshots
         return in_array('--update-snapshots', $_SERVER['argv'], true);
     }
 
-    private function doSnapshotAssertion(string $actual, Driver $driver, ?array $fieldConstraints = null): void
+    private function doSnapshotAssertion(string $actual, Driver $driver, array $fieldConstraints = []): void
     {
         $this->snapshotIncrementor++;
 
@@ -132,18 +132,22 @@ trait MatchesSnapshots
         }
     }
 
-    private function createSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual, ?array $fieldConstraints = null): void
+    private function createSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual, array $fieldConstraints = []): void
     {
+        $snapshot->update($actual, $fieldConstraints);
+
         $snapshotFactory = new SnapshotHandler(new Filesystem($this->getSnapshotDirectory()));
-        $snapshotFactory->writeToFilesystem($snapshot, $actual, $fieldConstraints);
+        $snapshotFactory->writeToFilesystem($snapshot);
 
         $this->registerSnapshotChange(sprintf('Snapshot created for %s', $snapshot->getId()));
     }
 
-    private function updateSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual, ?array $fieldConstraints = null): void
+    private function updateSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual, array $fieldConstraints = []): void
     {
+        $snapshot->update($actual, $fieldConstraints);
+
         $snapshotFactory = new SnapshotHandler(new Filesystem($this->getSnapshotDirectory()));
-        $snapshotFactory->writeToFilesystem($snapshot, $actual, $fieldConstraints);
+        $snapshotFactory->writeToFilesystem($snapshot);
 
         $this->registerSnapshotChange(sprintf('Snapshot updated for %s', $snapshot->getId()));
     }
