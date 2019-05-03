@@ -6,7 +6,11 @@ namespace KigaRoo\Replacement;
 
 interface Replacement 
 {
-    public function toString(): string;
+    /**
+     * return the replacement value. type depends on the replacement.
+     * @return mixed
+     */
+    public function getValue();
     public function atPath(): string;
     public function match($mixed): bool;
 }

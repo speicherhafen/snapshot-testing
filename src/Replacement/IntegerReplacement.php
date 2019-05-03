@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace KigaRoo\Replacement;
 
-use Webmozart\Assert\Assert;
-
-final class UuidReplacement implements Replacement
+final class IntegerReplacement implements Replacement
 {
     /**
      * @var string 
@@ -25,18 +23,11 @@ final class UuidReplacement implements Replacement
 
     public function getValue()
     {
-        return 'b84c9b7f-1ebb-49b6-9d18-4305932b2dd1';
+        return 666;
     }
 
     public function match($mixed): bool
     {
-        try {
-            Assert::uuid($mixed);
-            return true;
-        }
-        catch(\InvalidArgumentException $exception)
-        {
-            return false;
-        }
+        return is_int($mixed);
     }
 }

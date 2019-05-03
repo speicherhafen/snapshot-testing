@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace KigaRoo\Driver;
 
 use KigaRoo\Replacement\Replacement;
-use KigaRoo\Exception\ConstraintDoesNotMatch;
+use KigaRoo\Exception\CannotBeReplaced;
 use KigaRoo\Exception\InvalidConstraintPath;
 use PHPUnit\Framework\Assert;
 use KigaRoo\Driver;
@@ -42,7 +42,7 @@ final class JsonDriver implements Driver
      * @param $actualStringOrObjectOrArray string|\stdClass|array
      * @param Replacement[] $fieldConstraints
      * @return string|\stdClass|array
-     * @throws ConstraintDoesNotMatch
+     * @throws CannotBeReplaced
      * @throws InvalidConstraintPath
      */
     private function replaceFieldsWithConstraintExpression($actualStringOrObjectOrArray, array $fieldConstraints)
@@ -58,7 +58,6 @@ final class JsonDriver implements Driver
 
             try {
                 $value = $propertyAccessor->getValue($actualStringOrObjectOrArray, $fieldConstraint->atPath());
-                
             }
             catch (NoSuchPropertyException $exception)
             {
@@ -66,9 +65,9 @@ final class JsonDriver implements Driver
             }
             
             if(!$fieldConstraint->match($value)) {
-                throw new ConstraintDoesNotMatch(get_class($fieldConstraint), $fieldConstraint->atPath());
+                throw new CannotBeReplaced(get_class($fieldConstraint), $fieldConstraint->atPath());
             }
-            $propertyAccessor->setValue($actualStringOrObjectOrArray, $fieldConstraint->atPath(), $fieldConstraint->toString());
+            $propertyAccessor->setValue($actualStringOrObjectOrArray, $fieldConstraint->atPath(), $fieldConstraint->getValue());
         }
         
         return $actualStringOrObjectOrArray;
