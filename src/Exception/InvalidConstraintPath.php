@@ -6,7 +6,7 @@ namespace KigaRoo\Exception;
 
 use Exception;
 
-final class ConstraintPathException extends Exception
+final class InvalidConstraintPath extends Exception
 {
     public function __construct(string $path)
     {
