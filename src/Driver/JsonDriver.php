@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace KigaRoo\Driver;
 
+use KigaRoo\Accessor;
 use KigaRoo\Replacement\Replacement;
 use KigaRoo\Exception\CantBeReplaced;
 use KigaRoo\Exception\InvalidConstraintPath;
 use PHPUnit\Framework\Assert;
 use KigaRoo\Driver;
 use KigaRoo\Exception\CantBeSerialized;
-use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 final class JsonDriver implements Driver
 {
@@ -39,8 +38,8 @@ final class JsonDriver implements Driver
     }
 
     /**
-     * @param $actualStringOrObjectOrArray string|\stdClass|array
-     * @param Replacement[] $fieldConstraints
+     * @param  $actualStringOrObjectOrArray string|\stdClass|array
+     * @param  Replacement[]                                      $fieldConstraints
      * @return string|\stdClass|array
      * @throws CantBeReplaced
      * @throws InvalidConstraintPath
@@ -54,20 +53,7 @@ final class JsonDriver implements Driver
         
         foreach($fieldConstraints as $fieldConstraint)
         {
-            $propertyAccessor = PropertyAccess::createPropertyAccessor();
-
-            try {
-                $value = $propertyAccessor->getValue($actualStringOrObjectOrArray, $fieldConstraint->atPath());
-            }
-            catch (NoSuchPropertyException $exception)
-            {
-                throw new InvalidConstraintPath($fieldConstraint->atPath());
-            }
-            
-            if(!$fieldConstraint->match($value)) {
-                throw new CantBeReplaced(get_class($fieldConstraint), $fieldConstraint->atPath());
-            }
-            $propertyAccessor->setValue($actualStringOrObjectOrArray, $fieldConstraint->atPath(), $fieldConstraint->getValue());
+            (new Accessor)->replace($actualStringOrObjectOrArray, $fieldConstraint);
         }
         
         return $actualStringOrObjectOrArray;

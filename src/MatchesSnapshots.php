@@ -45,9 +45,11 @@ trait MatchesSnapshots
             return;
         }
 
-        $formattedMessages = array_map(static function (string $message) {
-            return '- ' . $message;
-        }, $this->snapshotChanges);
+        $formattedMessages = array_map(
+            static function (string $message) {
+                return '- ' . $message;
+            }, $this->snapshotChanges
+        );
 
         Assert::markTestIncomplete(implode(PHP_EOL, $formattedMessages));
     }
