@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace KigaRoo;
 
 use KigaRoo\Exception\CantBeReplaced;
-use KigaRoo\Exception\InvalidConstraintPath;
+use KigaRoo\Exception\InvalidMappingPath;
 use KigaRoo\Replacement\Replacement;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -13,6 +13,12 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 final class Accessor
 {
 
+    /**
+     * @param  string|\stdClass|array $actualStringOrObjectOrArray
+     * @param  Replacement            $replacement
+     * @return string|\stdClass|array
+     * @throws InvalidMappingPath
+     */
     public function replace($actualStringOrObjectOrArray, Replacement $replacement)
     {
         if(is_string($actualStringOrObjectOrArray)) {
@@ -22,7 +28,7 @@ final class Accessor
         $paths = explode('[*]', $replacement->atPath());
 
         if(count($paths) > 2) {
-            throw new InvalidConstraintPath($replacement->atPath());
+            throw new InvalidMappingPath($replacement->atPath());
         }
         
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
@@ -41,25 +47,22 @@ final class Accessor
 
         foreach($elements as $element)
         {
-            if('' === $paths[1])
-            {
+            if('' === $paths[1]) {
                 $this->assert($replacement, $element);
                 $element = $replacement->getValue();
             }
-            elseif('.' === $paths[1]{0})
-            {
-                $subPath = mb_substr($paths[1],1);
+            elseif('.' === $paths[1]{0}) {
+                $subPath = mb_substr($paths[1], 1);
                 $this->assert($replacement, $this->getValue($element, $subPath));
                 $propertyAccessor->setValue($element, $subPath, $replacement->getValue());
             }
-            elseif(preg_match('#^\[[0-9]+\]#', $paths[1]))
-            {
+            elseif(preg_match('#^\[[0-9]+\]#', $paths[1])) {
                 $this->assert($replacement, $this->getValue($element, $paths[1]));
                 $propertyAccessor->setValue($element, $paths[1], $replacement->getValue());
             }
             else
             {
-                throw new InvalidConstraintPath($replacement->atPath());
+                throw new InvalidMappingPath($replacement->atPath());
             }
             $modifiedElements[] = $element;
 
@@ -70,10 +73,10 @@ final class Accessor
     }
 
     /**
-     * @param  $data
-     * @param  string $path
-     * @return \stdClass|array
-     * @throws InvalidConstraintPath
+     * @param  string|\stdClass|array $data
+     * @param  string                 $path
+     * @return string|\stdClass|array
+     * @throws InvalidMappingPath
      */
     private function getValue($data, string $path)
     {
@@ -84,7 +87,7 @@ final class Accessor
         }
         catch (NoSuchPropertyException $exception)
         {
-            throw new InvalidConstraintPath($path);
+            throw new InvalidMappingPath($path);
         }
     }
 

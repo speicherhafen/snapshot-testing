@@ -6,10 +6,10 @@ namespace KigaRoo\Exception;
 
 use Exception;
 
-final class InvalidConstraintPath extends Exception
+final class InvalidMappingPath extends Exception
 {
     public function __construct(string $path)
     {
-        parent::__construct(sprintf('path to "%s" could not be found.', $path));
+        parent::__construct(sprintf('Path to "%s" could not be mapped.', $path));
     }
 }

@@ -44,9 +44,9 @@ final class Snapshot
         return $this->id;
     }
 
-    public function assertMatches(string $actual, array $fieldConstraints = [])
+    public function assertMatches(string $actual, array $replacements = [])
     {
-        $this->driver->match($this->content, $actual, $fieldConstraints);
+        $this->driver->match($this->content, $actual, $replacements);
     }
 
     public function getDriver(): Driver
@@ -59,8 +59,8 @@ final class Snapshot
         return $this->content;
     }
 
-    public function update(string $actual, array $fieldConstraints = []): void
+    public function update(string $actual, array $replacements = []): void
     {
-        $this->content = $this->driver->serialize($actual, $fieldConstraints);
+        $this->content = $this->driver->serialize($actual, $replacements);
     }
 }

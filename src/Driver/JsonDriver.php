@@ -6,19 +6,17 @@ namespace KigaRoo\Driver;
 
 use KigaRoo\Accessor;
 use KigaRoo\Replacement\Replacement;
-use KigaRoo\Exception\CantBeReplaced;
-use KigaRoo\Exception\InvalidConstraintPath;
 use PHPUnit\Framework\Assert;
 use KigaRoo\Driver;
 use KigaRoo\Exception\CantBeSerialized;
 
 final class JsonDriver implements Driver
 {
-    public function serialize(string $json, array $fieldConstraints = []): string
+    public function serialize(string $json, array $replacements = []): string
     {
         $data = $this->decode($json);
 
-        $data = $this->replaceFieldsWithConstraintExpression($data, $fieldConstraints);
+        $data = $this->replaceFieldsWithConstraintExpression($data, $replacements);
 
         return json_encode($data, JSON_PRETTY_PRINT).PHP_EOL;
     }
@@ -28,10 +26,10 @@ final class JsonDriver implements Driver
         return 'json';
     }
 
-    public function match(string $expected, string $actual, array $fieldConstraints = []): void
+    public function match(string $expected, string $actual, array $replacements = []): void
     {
         $actualArray = $this->decode($actual);
-        $actualArray = $this->replaceFieldsWithConstraintExpression($actualArray, $fieldConstraints);
+        $actualArray = $this->replaceFieldsWithConstraintExpression($actualArray, $replacements);
         $actual = json_encode($actualArray);
 
         Assert::assertJsonStringEqualsJsonString($expected, $actual);
@@ -39,21 +37,19 @@ final class JsonDriver implements Driver
 
     /**
      * @param  $actualStringOrObjectOrArray string|\stdClass|array
-     * @param  Replacement[]                                      $fieldConstraints
+     * @param  Replacement[]                                      $replacements
      * @return string|\stdClass|array
-     * @throws CantBeReplaced
-     * @throws InvalidConstraintPath
      */
-    private function replaceFieldsWithConstraintExpression($actualStringOrObjectOrArray, array $fieldConstraints)
+    private function replaceFieldsWithConstraintExpression($actualStringOrObjectOrArray, array $replacements)
     {
 
         if(is_string($actualStringOrObjectOrArray)) {
             return $actualStringOrObjectOrArray;
         }
         
-        foreach($fieldConstraints as $fieldConstraint)
+        foreach($replacements as $replacement)
         {
-            (new Accessor)->replace($actualStringOrObjectOrArray, $fieldConstraint);
+            (new Accessor)->replace($actualStringOrObjectOrArray, $replacement);
         }
         
         return $actualStringOrObjectOrArray;
@@ -69,7 +65,7 @@ final class JsonDriver implements Driver
         $data = json_decode($data);
 
         if(false === $data) {
-            throw new CantBeSerialized('not a valid json string.');
+            throw new CantBeSerialized('Given string does not contain valid json.');
         }
 
         return $data;

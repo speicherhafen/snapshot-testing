@@ -54,9 +54,9 @@ trait MatchesSnapshots
         Assert::markTestIncomplete(implode(PHP_EOL, $formattedMessages));
     }
 
-    public function assertMatchesJsonSnapshot(string $actual, array $fieldConstraints = []): void
+    public function assertMatchesJsonSnapshot(string $actual, array $replacements = []): void
     {
-        $this->doSnapshotAssertion($actual, new JsonDriver(), $fieldConstraints);
+        $this->doSnapshotAssertion($actual, new JsonDriver(), $replacements);
     }
 
     abstract public function getName($withDataSet = true);
@@ -99,7 +99,7 @@ trait MatchesSnapshots
         return in_array('--update-snapshots', $_SERVER['argv'], true);
     }
 
-    private function doSnapshotAssertion(string $actual, Driver $driver, array $fieldConstraints = []): void
+    private function doSnapshotAssertion(string $actual, Driver $driver, array $replacements = []): void
     {
         $this->snapshotIncrementor++;
 
@@ -113,7 +113,7 @@ trait MatchesSnapshots
         );
 
         if (!$snapshotHandler->snapshotExists($snapshot)) {
-            $this->createSnapshotAndMarkTestIncomplete($snapshot, $actual, $fieldConstraints);
+            $this->createSnapshotAndMarkTestIncomplete($snapshot, $actual, $replacements);
         }
 
         if ($this->shouldUpdateSnapshots()) {
@@ -121,22 +121,22 @@ trait MatchesSnapshots
                 // We only want to update snapshots which need updating. If the snapshot doesn't
                 // match the expected output, we'll catch the failure, create a new snapshot and
                 // mark the test as incomplete.
-                $snapshot->assertMatches($actual, $fieldConstraints);
+                $snapshot->assertMatches($actual, $replacements);
             } catch (ExpectationFailedException $exception) {
-                $this->updateSnapshotAndMarkTestIncomplete($snapshot, $actual, $fieldConstraints);
+                $this->updateSnapshotAndMarkTestIncomplete($snapshot, $actual, $replacements);
             }
         }
 
         try {
-            $snapshot->assertMatches($actual, $fieldConstraints);
+            $snapshot->assertMatches($actual, $replacements);
         } catch (ExpectationFailedException $exception) {
             $this->rethrowExpectationFailedExceptionWithUpdateSnapshotsPrompt($exception);
         }
     }
 
-    private function createSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual, array $fieldConstraints = []): void
+    private function createSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual, array $replacements = []): void
     {
-        $snapshot->update($actual, $fieldConstraints);
+        $snapshot->update($actual, $replacements);
 
         $snapshotFactory = new SnapshotHandler(new Filesystem($this->getSnapshotDirectory()));
         $snapshotFactory->writeToFilesystem($snapshot);
@@ -144,9 +144,9 @@ trait MatchesSnapshots
         $this->registerSnapshotChange(sprintf('Snapshot created for %s', $snapshot->getId()));
     }
 
-    private function updateSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual, array $fieldConstraints = []): void
+    private function updateSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual, array $replacements = []): void
     {
-        $snapshot->update($actual, $fieldConstraints);
+        $snapshot->update($actual, $replacements);
 
         $snapshotFactory = new SnapshotHandler(new Filesystem($this->getSnapshotDirectory()));
         $snapshotFactory->writeToFilesystem($snapshot);
