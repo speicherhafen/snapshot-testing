@@ -106,9 +106,15 @@ trait MatchesSnapshots
         $filesystem = new Filesystem($this->getSnapshotDirectory());
         $snapshotHandler = new SnapshotHandler($filesystem);
 
+        $filename = $snapshotHandler->getFilename($this->getSnapshotId(), $driver);
+        $content = '';
+        if ($filesystem->has($filename)) {
+            $content = $filesystem->read($filename);
+        }
+
         $snapshot = Snapshot::forTestCase(
             $this->getSnapshotId(),
-            $filesystem->read($snapshotHandler->getFilename($this->getSnapshotId(), $driver)),
+            $content,
             $driver
         );
 
