@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace KigaRoo;
+namespace KigaRoo\SnapshotTesting;
 
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\ExpectationFailedException;
 use ReflectionClass;
 use ReflectionObject;
-use KigaRoo\Driver\JsonDriver;
+use KigaRoo\SnapshotTesting\Driver\JsonDriver;
 
 trait MatchesSnapshots
 {

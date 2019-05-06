@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace KigaRoo;
+namespace KigaRoo\SnapshotTesting;
 
-use KigaRoo\Exception\CantBeReplaced;
-use KigaRoo\Exception\InvalidMappingPath;
-use KigaRoo\Replacement\Replacement;
+use KigaRoo\SnapshotTesting\Exception\CantBeReplaced;
+use KigaRoo\SnapshotTesting\Exception\InvalidMappingPath;
+use KigaRoo\SnapshotTesting\Replacement\Replacement;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 

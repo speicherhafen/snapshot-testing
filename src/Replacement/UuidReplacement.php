@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace KigaRoo\Replacement;
+namespace KigaRoo\SnapshotTesting\Replacement;
 
 use Webmozart\Assert\Assert;
 

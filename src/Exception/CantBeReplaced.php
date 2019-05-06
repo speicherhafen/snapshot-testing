@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace KigaRoo\Exception;
+namespace KigaRoo\SnapshotTesting\Exception;
 
 use Exception;
 

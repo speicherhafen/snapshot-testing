@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace KigaRoo;
+namespace KigaRoo\SnapshotTesting;
 
-use KigaRoo\Replacement\Replacement;
+use KigaRoo\SnapshotTesting\Replacement\Replacement;
 
 interface Driver
 {

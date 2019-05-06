@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use KigaRoo\Replacement\IntegerReplacement;
-use KigaRoo\Replacement\UuidReplacement;
-use KigaRoo\MatchesSnapshots;
+use KigaRoo\SnapshotTesting\MatchesSnapshots;
+use KigaRoo\SnapshotTesting\Replacement\IntegerReplacement;
+use KigaRoo\SnapshotTesting\Replacement\UuidReplacement;
 use PHPUnit\Framework\TestCase;
 
 class DummyTest extends TestCase

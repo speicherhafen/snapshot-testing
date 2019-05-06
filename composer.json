@@ -9,7 +9,7 @@
     },
     "autoload": {
         "psr-4": {
-            "KigaRoo\\": "src"
+            "KigaRoo\\SnapshotTesting\\": "src"
         }
     },
     "autoload-dev": {

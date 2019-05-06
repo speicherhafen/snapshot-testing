@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace KigaRoo\Driver;
+namespace KigaRoo\SnapshotTesting\Driver;
 
-use KigaRoo\Accessor;
-use KigaRoo\Replacement\Replacement;
+use KigaRoo\SnapshotTesting\Accessor;
+use KigaRoo\SnapshotTesting\Replacement\Replacement;
 use PHPUnit\Framework\Assert;
-use KigaRoo\Driver;
-use KigaRoo\Exception\CantBeSerialized;
+use KigaRoo\SnapshotTesting\Driver;
+use KigaRoo\SnapshotTesting\Exception\CantBeSerialized;
 
 final class JsonDriver implements Driver
 {

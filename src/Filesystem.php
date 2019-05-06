@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace KigaRoo;
+namespace KigaRoo\SnapshotTesting;
 
 final class Filesystem
 {
