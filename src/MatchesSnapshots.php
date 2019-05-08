@@ -4,28 +4,33 @@ declare(strict_types=1);
 
 namespace KigaRoo\SnapshotTesting;
 
+use KigaRoo\SnapshotTesting\Driver\JsonDriver;
+use KigaRoo\SnapshotTesting\Replacement\Replacement;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\ExpectationFailedException;
 use ReflectionClass;
 use ReflectionObject;
-use KigaRoo\SnapshotTesting\Driver\JsonDriver;
+use const DIRECTORY_SEPARATOR;
+use const PHP_EOL;
+use function array_map;
+use function count;
+use function dirname;
+use function implode;
+use function in_array;
+use function sprintf;
 
 trait MatchesSnapshots
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     private $snapshotIncrementor;
 
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     private $snapshotChanges = [];
 
     /**
      * @before
      */
-    public function setUpSnapshotIncrementor(): void
+    public function setUpSnapshotIncrementor() : void
     {
         $this->snapshotIncrementor = 0;
     }
@@ -33,7 +38,7 @@ trait MatchesSnapshots
     /**
      * @after
      */
-    public function markTestIncompleteIfSnapshotsHaveChanged(): void
+    public function markTestIncompleteIfSnapshotsHaveChanged() : void
     {
         if (count($this->snapshotChanges) === 0) {
             return;
@@ -48,24 +53,31 @@ trait MatchesSnapshots
         $formattedMessages = array_map(
             static function (string $message) {
                 return '- ' . $message;
-            }, $this->snapshotChanges
+            },
+            $this->snapshotChanges
         );
 
         Assert::markTestIncomplete(implode(PHP_EOL, $formattedMessages));
     }
 
-    public function assertMatchesJsonSnapshot(string $actual, array $replacements = []): void
+    /**
+     * @param Replacement[] $replacements
+     */
+    public function assertMatchesJsonSnapshot(string $actual, array $replacements = []) : void
     {
         $this->doSnapshotAssertion($actual, new JsonDriver(), $replacements);
     }
 
+    /**
+     * // phpcs:disable
+     * @param bool $withDataSet
+     *
+     * @return string
+     * // phpcs:disable
+     */
     abstract public function getName($withDataSet = true);
 
-    /**
-     * Determines the snapshot's id. By default, the test case's class and
-     * method names are used.
-     */
-    private function getSnapshotId(): string
+    private function getSnapshotId() : string
     {
         return sprintf(
             '%s__%s__%s',
@@ -75,12 +87,7 @@ trait MatchesSnapshots
         );
     }
 
-    /**
-     * Determines the directory where snapshots are stored. By default a
-     * `__snapshots__` directory is created at the same level as the test
-     * class.
-     */
-    private function getSnapshotDirectory(): string
+    private function getSnapshotDirectory() : string
     {
         $directoryName = dirname((new ReflectionClass($this))->getFileName());
 
@@ -94,20 +101,23 @@ trait MatchesSnapshots
      * Override this method it you want to use a different flag or mechanism
      * than `-d --update-snapshots`.
      */
-    private function shouldUpdateSnapshots(): bool
+    private function shouldUpdateSnapshots() : bool
     {
         return in_array('--update-snapshots', $_SERVER['argv'], true);
     }
 
-    private function doSnapshotAssertion(string $actual, Driver $driver, array $replacements = []): void
+    /**
+     * @param Replacement[] $replacements
+     */
+    private function doSnapshotAssertion(string $actual, Driver $driver, array $replacements = []) : void
     {
         $this->snapshotIncrementor++;
 
-        $filesystem = new Filesystem($this->getSnapshotDirectory());
+        $filesystem      = new Filesystem($this->getSnapshotDirectory());
         $snapshotHandler = new SnapshotHandler($filesystem);
 
         $filename = $snapshotHandler->getFilename($this->getSnapshotId(), $driver);
-        $content = '';
+        $content  = '';
         if ($filesystem->has($filename)) {
             $content = $filesystem->read($filename);
         }
@@ -118,7 +128,7 @@ trait MatchesSnapshots
             $driver
         );
 
-        if (!$snapshotHandler->snapshotExists($snapshot)) {
+        if (! $snapshotHandler->snapshotExists($snapshot)) {
             $this->createSnapshotAndMarkTestIncomplete($snapshot, $actual, $replacements);
         }
 
@@ -140,8 +150,14 @@ trait MatchesSnapshots
         }
     }
 
-    private function createSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual, array $replacements = []): void
-    {
+    /**
+     * @param Replacement[] $replacements
+     */
+    private function createSnapshotAndMarkTestIncomplete(
+        Snapshot $snapshot,
+        string $actual,
+        array $replacements = []
+    ) : void {
         $snapshot->update($actual, $replacements);
 
         $snapshotFactory = new SnapshotHandler(new Filesystem($this->getSnapshotDirectory()));
@@ -150,8 +166,14 @@ trait MatchesSnapshots
         $this->registerSnapshotChange(sprintf('Snapshot created for %s', $snapshot->getId()));
     }
 
-    private function updateSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual, array $replacements = []): void
-    {
+    /**
+     * @param Replacement[] $replacements
+     */
+    private function updateSnapshotAndMarkTestIncomplete(
+        Snapshot $snapshot,
+        string $actual,
+        array $replacements = []
+    ) : void {
         $snapshot->update($actual, $replacements);
 
         $snapshotFactory = new SnapshotHandler(new Filesystem($this->getSnapshotDirectory()));
@@ -160,8 +182,9 @@ trait MatchesSnapshots
         $this->registerSnapshotChange(sprintf('Snapshot updated for %s', $snapshot->getId()));
     }
 
-    private function rethrowExpectationFailedExceptionWithUpdateSnapshotsPrompt(ExpectationFailedException $exception): void
-    {
+    private function rethrowExpectationFailedExceptionWithUpdateSnapshotsPrompt(
+        ExpectationFailedException $exception
+    ) : void {
         $newMessage = sprintf(
             '%s%s%s',
             $exception->getMessage(),
@@ -178,7 +201,7 @@ trait MatchesSnapshots
         throw $exception;
     }
 
-    private function registerSnapshotChange(string $message): void
+    private function registerSnapshotChange(string $message) : void
     {
         $this->snapshotChanges[] = $message;
     }

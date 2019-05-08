@@ -4,21 +4,17 @@ declare(strict_types=1);
 
 namespace KigaRoo\SnapshotTesting;
 
+use KigaRoo\SnapshotTesting\Replacement\Replacement;
+
 final class Snapshot
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $id;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $content;
 
-    /**
-     * @var \KigaRoo\Driver
-     */
+    /** @var \KigaRoo\Driver */
     private $driver;
 
     private function __construct(
@@ -26,8 +22,8 @@ final class Snapshot
         string $content,
         Driver $driver
     ) {
-        $this->id = $id;
-        $this->driver = $driver;
+        $this->id      = $id;
+        $this->driver  = $driver;
         $this->content = $content;
     }
 
@@ -35,31 +31,37 @@ final class Snapshot
         string $id,
         string $content,
         Driver $driver
-    ): self {
+    ) : self {
         return new self($id, $content, $driver);
     }
 
-    public function getId(): string
+    public function getId() : string
     {
         return $this->id;
     }
 
-    public function assertMatches(string $actual, array $replacements = [])
+    /**
+     * @param Replacement[] $replacements
+     */
+    public function assertMatches(string $actual, array $replacements = []) : void
     {
         $this->driver->match($this->content, $actual, $replacements);
     }
 
-    public function getDriver(): Driver
+    public function getDriver() : Driver
     {
         return $this->driver;
     }
 
-    public function getContent(): string
+    public function getContent() : string
     {
         return $this->content;
     }
 
-    public function update(string $actual, array $replacements = []): void
+    /**
+     * @param Replacement[] $replacements
+     */
+    public function update(string $actual, array $replacements = []) : void
     {
         $this->content = $this->driver->serialize($actual, $replacements);
     }
