@@ -52,16 +52,17 @@ final class Accessor
         $modifiedElements = [];
 
         foreach ($elements as $element) {
-            if ($paths[1] === '') {
+            $substring = $paths[1];
+            if ($substring === '') {
                 $this->assert($replacement, $element);
                 $element = $replacement->getValue();
-            } elseif ($paths[1]{0 === '.'}) {
-                $subPath = mb_substr($paths[1], 1);
+            } elseif ($substring[0] === '.') {
+                $subPath = mb_substr($substring, 1);
                 $this->assert($replacement, $this->getValue($element, $subPath));
                 $propertyAccessor->setValue($element, $subPath, $replacement->getValue());
-            } elseif (preg_match('#^\[[0-9]+\]#', $paths[1])) {
-                $this->assert($replacement, $this->getValue($element, $paths[1]));
-                $propertyAccessor->setValue($element, $paths[1], $replacement->getValue());
+            } elseif (preg_match('#^\[[0-9]+\]#', $substring)) {
+                $this->assert($replacement, $this->getValue($element, $substring));
+                $propertyAccessor->setValue($element, $substring, $replacement->getValue());
             } else {
                 throw new InvalidMappingPath($replacement->atPath());
             }
