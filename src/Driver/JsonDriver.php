@@ -5,66 +5,77 @@ declare(strict_types=1);
 namespace KigaRoo\SnapshotTesting\Driver;
 
 use KigaRoo\SnapshotTesting\Accessor;
-use KigaRoo\SnapshotTesting\Replacement\Replacement;
-use PHPUnit\Framework\Assert;
 use KigaRoo\SnapshotTesting\Driver;
 use KigaRoo\SnapshotTesting\Exception\CantBeSerialized;
+use KigaRoo\SnapshotTesting\Replacement\Replacement;
+use PHPUnit\Framework\Assert;
+use stdClass;
+use const JSON_PRETTY_PRINT;
+use const PHP_EOL;
+use function is_string;
+use function json_decode;
+use function json_encode;
 
 final class JsonDriver implements Driver
 {
-    public function serialize(string $json, array $replacements = []): string
+    /**
+     * @param Replacement[] $replacements
+     */
+    public function serialize(string $json, array $replacements = []) : string
     {
         $data = $this->decode($json);
 
         $data = $this->replaceFieldsWithConstraintExpression($data, $replacements);
 
-        return json_encode($data, JSON_PRETTY_PRINT).PHP_EOL;
+        return json_encode($data, JSON_PRETTY_PRINT) . PHP_EOL;
     }
 
-    public function extension(): string
+    public function extension() : string
     {
         return 'json';
     }
 
-    public function match(string $expected, string $actual, array $replacements = []): void
+    /**
+     * @param Replacement[] $replacements
+     */
+    public function match(string $expected, string $actual, array $replacements = []) : void
     {
         $actualArray = $this->decode($actual);
         $actualArray = $this->replaceFieldsWithConstraintExpression($actualArray, $replacements);
-        $actual = json_encode($actualArray);
+        $actual      = json_encode($actualArray);
 
         Assert::assertJsonStringEqualsJsonString($expected, $actual);
     }
 
     /**
-     * @param  $actualStringOrObjectOrArray string|\stdClass|array
-     * @param  Replacement[]                                      $replacements
-     * @return string|\stdClass|array
+     * @param string|stdClass|Replacement[] $actualStringOrObjectOrArray
+     * @param Replacement[]                 $replacements
+     *
+     * @return string|stdClass|mixed[]
      */
     private function replaceFieldsWithConstraintExpression($actualStringOrObjectOrArray, array $replacements)
     {
-
-        if(is_string($actualStringOrObjectOrArray)) {
+        if (is_string($actualStringOrObjectOrArray)) {
             return $actualStringOrObjectOrArray;
         }
-        
-        foreach($replacements as $replacement)
-        {
-            (new Accessor)->replace($actualStringOrObjectOrArray, $replacement);
+
+        foreach ($replacements as $replacement) {
+            (new Accessor())->replace($actualStringOrObjectOrArray, $replacement);
         }
-        
+
         return $actualStringOrObjectOrArray;
     }
 
     /**
-     * @param  string $data
-     * @return string|object|array
+     * @return string|object|mixed[]
+     *
      * @throws CantBeSerialized
      */
-    private function decode(string $data) 
+    private function decode(string $data)
     {
         $data = json_decode($data);
 
-        if(false === $data) {
+        if ($data === false) {
             throw new CantBeSerialized('Given string does not contain valid json.');
         }
 

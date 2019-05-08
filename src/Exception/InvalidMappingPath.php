@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace KigaRoo\SnapshotTesting\Exception;
 
 use Exception;
+use function sprintf;
 
 final class InvalidMappingPath extends Exception
 {

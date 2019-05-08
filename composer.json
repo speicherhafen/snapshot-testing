@@ -23,5 +23,8 @@
         "symfony/filesystem": "^2.8",
         "symfony/property-access": "^2.7",
         "webmozart/assert": "1.2"
+    },
+    "require-dev": {
+        "doctrine/coding-standard": "^6.0"
     }
 }

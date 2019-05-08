@@ -11,3 +11,8 @@ install:
 
 script:
   - ./vendor/bin/phpunit tests/unit
+
+jobs:
+  include:
+    - stage: Code Quality
+      script: vendor/bin/phpcs --standard=Doctrine src
