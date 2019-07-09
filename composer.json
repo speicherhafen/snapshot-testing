@@ -20,11 +20,11 @@
         "ext-json": "*",
         "ext-mbstring": "*",
         "phpunit/phpunit": "~6.5",
-        "symfony/filesystem": "^2.8",
-        "symfony/property-access": "^2.7",
-        "webmozart/assert": "1.2"
+        "symfony/filesystem": "~2.8|~3.0|~4.0",
+        "symfony/property-access": "~2.8|~3.0|~4.0",
+        "webmozart/assert": "~1.2"
     },
     "require-dev": {
-        "doctrine/coding-standard": "^6.0"
+        "doctrine/coding-standard": "~6.0"
     }
 }
