@@ -25,7 +25,7 @@ final class JsonDriver implements Driver
     {
         $data = $this->decode($json);
 
-        $data = $this->replaceFieldsWithConstraintExpression($data, $replacements);
+        $data = $this->replaceFields($data, $replacements);
 
         return json_encode($data, JSON_PRETTY_PRINT) . PHP_EOL;
     }
@@ -41,29 +41,49 @@ final class JsonDriver implements Driver
     public function match(string $expected, string $actual, array $replacements = []) : void
     {
         $actualArray = $this->decode($actual);
-        $actualArray = $this->replaceFieldsWithConstraintExpression($actualArray, $replacements);
+        $this->assertFields($actualArray, $replacements);
+        $actualArray = $this->replaceFields($actualArray, $replacements);
         $actual      = json_encode($actualArray);
+
+        $expectedArray = $this->decode($expected);
+        $expectedArray = $this->replaceFields($expectedArray, $replacements);
+        $expected      = json_encode($expectedArray);
 
         Assert::assertJsonStringEqualsJsonString($expected, $actual);
     }
 
     /**
-     * @param string|stdClass|Replacement[] $actualStringOrObjectOrArray
+     * @param string|stdClass|Replacement[] $data
+     * @param Replacement[]                 $replacements
+     */
+    private function assertFields($data, array $replacements) : void
+    {
+        if (is_string($data)) {
+            return;
+        }
+
+        foreach ($replacements as $replacement) {
+            (new Accessor())->assertFields($data, $replacement);
+        }
+    }
+
+    /**
+     * @param string|stdClass|Replacement[] $data
      * @param Replacement[]                 $replacements
      *
      * @return string|stdClass|mixed[]
      */
-    private function replaceFieldsWithConstraintExpression($actualStringOrObjectOrArray, array $replacements)
+    private function replaceFields($data, array $replacements)
     {
-        if (is_string($actualStringOrObjectOrArray)) {
-            return $actualStringOrObjectOrArray;
+        if (is_string($data)) {
+            return $data;
         }
 
         foreach ($replacements as $replacement) {
-            (new Accessor())->replace($actualStringOrObjectOrArray, $replacement);
+            (new Accessor())->replaceFields($data, $replacement);
         }
 
-        return $actualStringOrObjectOrArray;
+        return $data;
     }
 
     /**
