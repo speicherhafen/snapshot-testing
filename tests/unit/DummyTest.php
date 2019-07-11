@@ -8,16 +8,17 @@ use KigaRoo\SnapshotTesting\MatchesSnapshots;
 use KigaRoo\SnapshotTesting\Wildcard\IntegerWildcard;
 use KigaRoo\SnapshotTesting\Wildcard\UuidWildcard;
 use PHPUnit\Framework\TestCase;
+use function json_encode;
 
 class DummyTest extends TestCase
 {
     use MatchesSnapshots;
 
-    public function testDummy()
+    public function testDummy() : void
     {
-
         $data = json_encode(
-            ['tests' =>
+            [
+                'tests' =>
              [
                  'id' => 'b84c9b7f-1ebb-49b6-9d18-4305932b2dd1',
                  'multiple' => [
@@ -29,7 +30,7 @@ class DummyTest extends TestCase
                      123,
                      1234,
                      12345,
-                     123456
+                     123456,
                  ],
                  'objects' => [
                      ['id' => 123],
@@ -39,11 +40,11 @@ class DummyTest extends TestCase
                  'arrays' => [
                      [1,2,3],
                      [3,4,5],
-                 ]
+                 ],
              ],
             ]
         );
-        
+
         $wildcards = [
             new UuidWildcard('tests.id'),
             new IntegerWildcard('tests.multiple[1]'),

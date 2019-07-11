@@ -11,10 +11,8 @@ interface Driver
     /**
      * Serialize a snapshot's data to a string that can be written to a
      * generated snapshot file.
-     *
-     * @param Wildcard[] $wildcards
      */
-    public function serialize(string $decodedJson, array $wildcards = []) : string;
+    public function serialize(string $decodedJson) : string;
 
     /**
      * The extension that should be used to save the snapshot file, without

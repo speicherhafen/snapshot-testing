@@ -14,7 +14,7 @@ final class Snapshot
     /** @var string */
     private $content;
 
-    /** @var \KigaRoo\Driver */
+    /** @var Driver */
     private $driver;
 
     private function __construct(
@@ -58,11 +58,8 @@ final class Snapshot
         return $this->content;
     }
 
-    /**
-     * @param Wildcard[] $wildcards
-     */
-    public function update(string $actual, array $wildcards = []) : void
+    public function update(string $actual) : void
     {
-        $this->content = $this->driver->serialize($actual, $wildcards);
+        $this->content = $this->driver->serialize($actual);
     }
 }

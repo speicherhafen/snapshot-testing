@@ -18,14 +18,9 @@ use function json_encode;
 
 final class JsonDriver implements Driver
 {
-    /**
-     * @param Wildcard[] $wildcards
-     */
-    public function serialize(string $json, array $wildcards = []) : string
+    public function serialize(string $json) : string
     {
         $data = $this->decode($json);
-
-        $data = $this->replaceFields($data, $wildcards);
 
         return json_encode($data, JSON_PRETTY_PRINT) . PHP_EOL;
     }
@@ -42,6 +37,7 @@ final class JsonDriver implements Driver
     {
         $actualArray = $this->decode($actual);
         $this->assertFields($actualArray, $wildcards);
+
         $actualArray = $this->replaceFields($actualArray, $wildcards);
         $actual      = json_encode($actualArray);
 
