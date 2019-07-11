@@ -7,11 +7,9 @@ namespace KigaRoo\SnapshotTesting\Replacement;
 interface Replacement
 {
     /**
-     * return the replacement value. type depends on the replacement implementation.
-     *
-     * @return mixed
+     * Generic value for all replacement types
      */
-    public function getValue();
+    public const VALUE = 'REPLACEMENT';
 
     /**
      * path to where array or property value will be replaced

@@ -23,14 +23,6 @@ final class UuidReplacement implements Replacement
     }
 
     /**
-     * @return mixed
-     */
-    public function getValue()
-    {
-        return 'b84c9b7f-1ebb-49b6-9d18-4305932b2dd1';
-    }
-
-    /**
      * @param mixed $mixed
      */
     public function match($mixed) : bool

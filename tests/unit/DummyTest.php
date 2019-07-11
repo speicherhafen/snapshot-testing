@@ -44,14 +44,14 @@ class DummyTest extends TestCase
             ]
         );
         
-        $fieldConstraints = [
+        $replacements = [
             new UuidReplacement('tests.id'),
             new IntegerReplacement('tests.multiple[1]'),
             new IntegerReplacement('tests.ints[*]'),
-            new IntegerReplacement('tests.objects[*].id'), 
+            new IntegerReplacement('tests.objects[*].id'),
             new IntegerReplacement('tests.arrays[*][2]'),
         ];
 
-        $this->assertMatchesJsonSnapshot($data, $fieldConstraints);
+        $this->assertMatchesJsonSnapshot($data, $replacements);
     }
 }

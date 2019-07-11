@@ -20,16 +20,53 @@ use function preg_match;
 final class Accessor
 {
     /**
-     * @param string|stdClass|mixed[] $actualStringOrObjectOrArray
-     *
-     * @return string|stdClass|mixed[]
+     * @param string|stdClass|mixed[] $data
      *
      * @throws InvalidMappingPath
      */
-    public function replace($actualStringOrObjectOrArray, Replacement $replacement)
+    public function assertFields($data, Replacement $replacement) : void
     {
-        if (is_string($actualStringOrObjectOrArray)) {
-            return $actualStringOrObjectOrArray;
+        if (is_string($data)) {
+            return;
+        }
+
+        $paths = explode('[*]', $replacement->atPath());
+        if (count($paths) > 2) {
+            throw new InvalidMappingPath($replacement->atPath());
+        }
+
+        if (count($paths) === 1) {
+            $this->assert($replacement, $this->getValue($data, $replacement->atPath()));
+
+            return;
+        }
+
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $elements         = $propertyAccessor->getValue($data, $paths[0]);
+        foreach ($elements as $element) {
+            $substring = $paths[1];
+            if ($substring === '') {
+                $this->assert($replacement, $element);
+            } elseif ($substring[0] === '.') {
+                $subPath = mb_substr($substring, 1);
+                $this->assert($replacement, $this->getValue($element, $subPath));
+            } elseif (preg_match('#^\[[0-9]+\]#', $substring)) {
+                $this->assert($replacement, $this->getValue($element, $substring));
+            } else {
+                throw new InvalidMappingPath($replacement->atPath());
+            }
+        }
+    }
+
+    /**
+     * @param string|stdClass|mixed[] $data
+     *
+     * @throws InvalidMappingPath
+     */
+    public function replaceFields($data, Replacement $replacement) : void
+    {
+        if (is_string($data)) {
+            return;
         }
 
         $paths = explode('[*]', $replacement->atPath());
@@ -41,36 +78,30 @@ final class Accessor
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
 
         if (count($paths) === 1) {
-            $this->assert($replacement, $this->getValue($actualStringOrObjectOrArray, $replacement->atPath()));
+            $propertyAccessor->setValue($data, $replacement->atPath(), Replacement::VALUE);
 
-            $propertyAccessor->setValue($actualStringOrObjectOrArray, $replacement->atPath(), $replacement->getValue());
-
-            return $actualStringOrObjectOrArray;
+            return;
         }
 
-        $elements         = $propertyAccessor->getValue($actualStringOrObjectOrArray, $paths[0]);
+        $elements         = $propertyAccessor->getValue($data, $paths[0]);
         $modifiedElements = [];
 
         foreach ($elements as $element) {
             $substring = $paths[1];
             if ($substring === '') {
-                $this->assert($replacement, $element);
-                $element = $replacement->getValue();
+                $element = Replacement::VALUE;
             } elseif ($substring[0] === '.') {
                 $subPath = mb_substr($substring, 1);
-                $this->assert($replacement, $this->getValue($element, $subPath));
-                $propertyAccessor->setValue($element, $subPath, $replacement->getValue());
+                $propertyAccessor->setValue($element, $subPath, Replacement::VALUE);
             } elseif (preg_match('#^\[[0-9]+\]#', $substring)) {
-                $this->assert($replacement, $this->getValue($element, $substring));
-                $propertyAccessor->setValue($element, $substring, $replacement->getValue());
+                $propertyAccessor->setValue($element, $substring, Replacement::VALUE);
             } else {
                 throw new InvalidMappingPath($replacement->atPath());
             }
             $modifiedElements[] = $element;
         }
-        $propertyAccessor->setValue($actualStringOrObjectOrArray, $paths[0], $modifiedElements);
 
-        return $actualStringOrObjectOrArray;
+        $propertyAccessor->setValue($data, $paths[0], $modifiedElements);
     }
 
     /**

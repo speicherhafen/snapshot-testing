@@ -22,14 +22,6 @@ final class IntegerReplacement implements Replacement
     }
 
     /**
-     * @return mixed
-     */
-    public function getValue()
-    {
-        return 666;
-    }
-
-    /**
      * @param mixed $mixed
      */
     public function match($mixed) : bool
