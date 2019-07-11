@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace KigaRoo\SnapshotTesting;
 
-use KigaRoo\SnapshotTesting\Exception\CantBeReplaced;
 use KigaRoo\SnapshotTesting\Exception\InvalidMappingPath;
-use KigaRoo\SnapshotTesting\Replacement\Replacement;
+use KigaRoo\SnapshotTesting\Exception\WildcardMismatch;
+use KigaRoo\SnapshotTesting\Wildcard\Wildcard;
 use stdClass;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -24,19 +24,19 @@ final class Accessor
      *
      * @throws InvalidMappingPath
      */
-    public function assertFields($data, Replacement $replacement) : void
+    public function assertFields($data, Wildcard $wildcard) : void
     {
         if (is_string($data)) {
             return;
         }
 
-        $paths = explode('[*]', $replacement->atPath());
+        $paths = explode('[*]', $wildcard->atPath());
         if (count($paths) > 2) {
-            throw new InvalidMappingPath($replacement->atPath());
+            throw new InvalidMappingPath($wildcard->atPath());
         }
 
         if (count($paths) === 1) {
-            $this->assert($replacement, $this->getValue($data, $replacement->atPath()));
+            $this->assert($wildcard, $this->getValue($data, $wildcard->atPath()));
 
             return;
         }
@@ -46,14 +46,14 @@ final class Accessor
         foreach ($elements as $element) {
             $substring = $paths[1];
             if ($substring === '') {
-                $this->assert($replacement, $element);
+                $this->assert($wildcard, $element);
             } elseif ($substring[0] === '.') {
                 $subPath = mb_substr($substring, 1);
-                $this->assert($replacement, $this->getValue($element, $subPath));
+                $this->assert($wildcard, $this->getValue($element, $subPath));
             } elseif (preg_match('#^\[[0-9]+\]#', $substring)) {
-                $this->assert($replacement, $this->getValue($element, $substring));
+                $this->assert($wildcard, $this->getValue($element, $substring));
             } else {
-                throw new InvalidMappingPath($replacement->atPath());
+                throw new InvalidMappingPath($wildcard->atPath());
             }
         }
     }
@@ -63,22 +63,22 @@ final class Accessor
      *
      * @throws InvalidMappingPath
      */
-    public function replaceFields($data, Replacement $replacement) : void
+    public function replaceFields($data, Wildcard $wildcard) : void
     {
         if (is_string($data)) {
             return;
         }
 
-        $paths = explode('[*]', $replacement->atPath());
+        $paths = explode('[*]', $wildcard->atPath());
 
         if (count($paths) > 2) {
-            throw new InvalidMappingPath($replacement->atPath());
+            throw new InvalidMappingPath($wildcard->atPath());
         }
 
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
 
         if (count($paths) === 1) {
-            $propertyAccessor->setValue($data, $replacement->atPath(), Replacement::VALUE);
+            $propertyAccessor->setValue($data, $wildcard->atPath(), Wildcard::REPLACEMENT);
 
             return;
         }
@@ -89,14 +89,14 @@ final class Accessor
         foreach ($elements as $element) {
             $substring = $paths[1];
             if ($substring === '') {
-                $element = Replacement::VALUE;
+                $element = Wildcard::REPLACEMENT;
             } elseif ($substring[0] === '.') {
                 $subPath = mb_substr($substring, 1);
-                $propertyAccessor->setValue($element, $subPath, Replacement::VALUE);
+                $propertyAccessor->setValue($element, $subPath, Wildcard::REPLACEMENT);
             } elseif (preg_match('#^\[[0-9]+\]#', $substring)) {
-                $propertyAccessor->setValue($element, $substring, Replacement::VALUE);
+                $propertyAccessor->setValue($element, $substring, Wildcard::REPLACEMENT);
             } else {
-                throw new InvalidMappingPath($replacement->atPath());
+                throw new InvalidMappingPath($wildcard->atPath());
             }
             $modifiedElements[] = $element;
         }
@@ -125,12 +125,12 @@ final class Accessor
     /**
      * @param stdClass|mixed[] $value
      *
-     * @throws CantBeReplaced
+     * @throws WildcardMismatch
      */
-    private function assert(Replacement $replacement, $value) : void
+    private function assert(Wildcard $wildcard, $value) : void
     {
-        if (! $replacement->match($value)) {
-            throw new CantBeReplaced(get_class($replacement), $replacement->atPath());
+        if (! $wildcard->match($value)) {
+            throw new WildcardMismatch(get_class($wildcard), $wildcard->atPath());
         }
     }
 }

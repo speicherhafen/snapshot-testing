@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests;
 
 use KigaRoo\SnapshotTesting\MatchesSnapshots;
-use KigaRoo\SnapshotTesting\Replacement\IntegerReplacement;
-use KigaRoo\SnapshotTesting\Replacement\UuidReplacement;
+use KigaRoo\SnapshotTesting\Wildcard\IntegerWildcard;
+use KigaRoo\SnapshotTesting\Wildcard\UuidWildcard;
 use PHPUnit\Framework\TestCase;
 
 class DummyTest extends TestCase
@@ -25,7 +25,7 @@ class DummyTest extends TestCase
                      1 => 6665,
                      2 => 'c',
                  ],
-                 'ints' => [
+                 'integers' => [
                      123,
                      1234,
                      12345,
@@ -44,14 +44,14 @@ class DummyTest extends TestCase
             ]
         );
         
-        $replacements = [
-            new UuidReplacement('tests.id'),
-            new IntegerReplacement('tests.multiple[1]'),
-            new IntegerReplacement('tests.ints[*]'),
-            new IntegerReplacement('tests.objects[*].id'),
-            new IntegerReplacement('tests.arrays[*][2]'),
+        $wildcards = [
+            new UuidWildcard('tests.id'),
+            new IntegerWildcard('tests.multiple[1]'),
+            new IntegerWildcard('tests.integers[*]'),
+            new IntegerWildcard('tests.objects[*].id'),
+            new IntegerWildcard('tests.arrays[*][2]'),
         ];
 
-        $this->assertMatchesJsonSnapshot($data, $replacements);
+        $this->assertMatchesJsonSnapshot($data, $wildcards);
     }
 }

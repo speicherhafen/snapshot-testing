@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace KigaRoo\SnapshotTesting;
 
-use KigaRoo\SnapshotTesting\Replacement\Replacement;
+use KigaRoo\SnapshotTesting\Wildcard\Wildcard;
 
 final class Snapshot
 {
@@ -41,11 +41,11 @@ final class Snapshot
     }
 
     /**
-     * @param Replacement[] $replacements
+     * @param Wildcard[] $wildcards
      */
-    public function assertMatches(string $actual, array $replacements = []) : void
+    public function assertMatches(string $actual, array $wildcards = []) : void
     {
-        $this->driver->match($this->content, $actual, $replacements);
+        $this->driver->match($this->content, $actual, $wildcards);
     }
 
     public function getDriver() : Driver
@@ -59,10 +59,10 @@ final class Snapshot
     }
 
     /**
-     * @param Replacement[] $replacements
+     * @param Wildcard[] $wildcards
      */
-    public function update(string $actual, array $replacements = []) : void
+    public function update(string $actual, array $wildcards = []) : void
     {
-        $this->content = $this->driver->serialize($actual, $replacements);
+        $this->content = $this->driver->serialize($actual, $wildcards);
     }
 }

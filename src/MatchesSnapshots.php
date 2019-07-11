@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace KigaRoo\SnapshotTesting;
 
 use KigaRoo\SnapshotTesting\Driver\JsonDriver;
-use KigaRoo\SnapshotTesting\Replacement\Replacement;
+use KigaRoo\SnapshotTesting\Wildcard\Wildcard;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\ExpectationFailedException;
 use ReflectionClass;
@@ -61,11 +61,11 @@ trait MatchesSnapshots
     }
 
     /**
-     * @param Replacement[] $replacements
+     * @param Wildcard[] $wildcards
      */
-    public function assertMatchesJsonSnapshot(string $actual, array $replacements = []) : void
+    public function assertMatchesJsonSnapshot(string $actual, array $wildcards = []) : void
     {
-        $this->doSnapshotAssertion($actual, new JsonDriver(), $replacements);
+        $this->doSnapshotAssertion($actual, new JsonDriver(), $wildcards);
     }
 
     /**
@@ -107,9 +107,9 @@ trait MatchesSnapshots
     }
 
     /**
-     * @param Replacement[] $replacements
+     * @param Wildcard[] $wildcards
      */
-    private function doSnapshotAssertion(string $actual, Driver $driver, array $replacements = []) : void
+    private function doSnapshotAssertion(string $actual, Driver $driver, array $wildcards = []) : void
     {
         $this->snapshotIncrementor++;
 
@@ -129,7 +129,7 @@ trait MatchesSnapshots
         );
 
         if (! $snapshotHandler->snapshotExists($snapshot)) {
-            $this->createSnapshotAndMarkTestIncomplete($snapshot, $actual, $replacements);
+            $this->createSnapshotAndMarkTestIncomplete($snapshot, $actual, $wildcards);
         }
 
         if ($this->shouldUpdateSnapshots()) {
@@ -137,28 +137,28 @@ trait MatchesSnapshots
                 // We only want to update snapshots which need updating. If the snapshot doesn't
                 // match the expected output, we'll catch the failure, create a new snapshot and
                 // mark the test as incomplete.
-                $snapshot->assertMatches($actual, $replacements);
+                $snapshot->assertMatches($actual, $wildcards);
             } catch (ExpectationFailedException $exception) {
-                $this->updateSnapshotAndMarkTestIncomplete($snapshot, $actual, $replacements);
+                $this->updateSnapshotAndMarkTestIncomplete($snapshot, $actual, $wildcards);
             }
         }
 
         try {
-            $snapshot->assertMatches($actual, $replacements);
+            $snapshot->assertMatches($actual, $wildcards);
         } catch (ExpectationFailedException $exception) {
             $this->rethrowExpectationFailedExceptionWithUpdateSnapshotsPrompt($exception);
         }
     }
 
     /**
-     * @param Replacement[] $replacements
+     * @param Wildcard[] $wildcards
      */
     private function createSnapshotAndMarkTestIncomplete(
         Snapshot $snapshot,
         string $actual,
-        array $replacements = []
+        array $wildcards = []
     ) : void {
-        $snapshot->update($actual, $replacements);
+        $snapshot->update($actual, $wildcards);
 
         $snapshotFactory = new SnapshotHandler(new Filesystem($this->getSnapshotDirectory()));
         $snapshotFactory->writeToFilesystem($snapshot);
@@ -167,14 +167,14 @@ trait MatchesSnapshots
     }
 
     /**
-     * @param Replacement[] $replacements
+     * @param Wildcard[] $wildcards
      */
     private function updateSnapshotAndMarkTestIncomplete(
         Snapshot $snapshot,
         string $actual,
-        array $replacements = []
+        array $wildcards = []
     ) : void {
-        $snapshot->update($actual, $replacements);
+        $snapshot->update($actual, $wildcards);
 
         $snapshotFactory = new SnapshotHandler(new Filesystem($this->getSnapshotDirectory()));
         $snapshotFactory->writeToFilesystem($snapshot);

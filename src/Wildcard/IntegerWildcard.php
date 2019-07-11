@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace KigaRoo\SnapshotTesting\Replacement;
+namespace KigaRoo\SnapshotTesting\Wildcard;
 
 use function is_int;
 
-final class IntegerReplacement implements Replacement
+final class IntegerWildcard implements Wildcard
 {
     /** @var string */
     private $path;
