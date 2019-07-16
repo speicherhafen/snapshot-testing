@@ -30,7 +30,7 @@ final class SnapshotHandler
     {
         $file = $snapshotId . '.' . $driver->extension();
         // Remove anything which isn't a word, whitespace, number
-        // or any of the following caracters -_~,;[]().
+        // or any of the following characters -_~,;[]().
         $file = preg_replace('([^\w\s\d\-_~,;\[\]\(\).])', '', $file);
         // Remove any runs of periods
         $file = preg_replace('([\.]{2,})', '', $file);

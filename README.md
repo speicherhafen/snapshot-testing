@@ -27,11 +27,11 @@ final class MyUnitTest extends TestCase
 }
 ```
 
-### Using Replacements
-If you have content in your data which changes intentionally, you can use are replacement:
+### Using Wildcards
+If you have content in your data which changes intentionally you can use wildcards:
 ```php
 use KigaRoo\SnapshotTesting\MatchesSnapshots;
-use KigaRoo\SnapshotTesting\Replacement\UuidReplacement;
+use KigaRoo\SnapshotTesting\Wildcard\UuidWildcard;
 
 final class MyUnitTest extends TestCase
 {
@@ -45,7 +45,7 @@ final class MyUnitTest extends TestCase
         ]);
         
         $this->assertMatchesJsonSnapshot($myJsonData, [
-            new UuidReplacement('id'),
+            new UuidWildcard('id'),
         ]);
     }
 }
@@ -53,6 +53,6 @@ final class MyUnitTest extends TestCase
 
 This ignores the concrete uuid given for the field "id" and only checks that a valid uuid is provided.
 
-The library currently supports the following replacements:
-- IntegerReplacement
-- UuidReplacement
+The library currently supports the following wildcards:
+- IntegerWildcard
+- UuidWildcard

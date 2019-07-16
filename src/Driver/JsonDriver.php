@@ -7,7 +7,7 @@ namespace KigaRoo\SnapshotTesting\Driver;
 use KigaRoo\SnapshotTesting\Accessor;
 use KigaRoo\SnapshotTesting\Driver;
 use KigaRoo\SnapshotTesting\Exception\CantBeSerialized;
-use KigaRoo\SnapshotTesting\Replacement\Replacement;
+use KigaRoo\SnapshotTesting\Wildcard\Wildcard;
 use PHPUnit\Framework\Assert;
 use stdClass;
 use const JSON_PRETTY_PRINT;
@@ -18,14 +18,9 @@ use function json_encode;
 
 final class JsonDriver implements Driver
 {
-    /**
-     * @param Replacement[] $replacements
-     */
-    public function serialize(string $json, array $replacements = []) : string
+    public function serialize(string $json) : string
     {
         $data = $this->decode($json);
-
-        $data = $this->replaceFieldsWithConstraintExpression($data, $replacements);
 
         return json_encode($data, JSON_PRETTY_PRINT) . PHP_EOL;
     }
@@ -36,34 +31,55 @@ final class JsonDriver implements Driver
     }
 
     /**
-     * @param Replacement[] $replacements
+     * @param Wildcard[] $wildcards
      */
-    public function match(string $expected, string $actual, array $replacements = []) : void
+    public function match(string $expected, string $actual, array $wildcards = []) : void
     {
         $actualArray = $this->decode($actual);
-        $actualArray = $this->replaceFieldsWithConstraintExpression($actualArray, $replacements);
+        $this->assertFields($actualArray, $wildcards);
+
+        $actualArray = $this->replaceFields($actualArray, $wildcards);
         $actual      = json_encode($actualArray);
+
+        $expectedArray = $this->decode($expected);
+        $expectedArray = $this->replaceFields($expectedArray, $wildcards);
+        $expected      = json_encode($expectedArray);
 
         Assert::assertJsonStringEqualsJsonString($expected, $actual);
     }
 
     /**
-     * @param string|stdClass|Replacement[] $actualStringOrObjectOrArray
-     * @param Replacement[]                 $replacements
+     * @param string|stdClass|Wildcard[] $data
+     * @param Wildcard[]                 $wildcards
+     */
+    private function assertFields($data, array $wildcards) : void
+    {
+        if (is_string($data)) {
+            return;
+        }
+
+        foreach ($wildcards as $wildcard) {
+            (new Accessor())->assertFields($data, $wildcard);
+        }
+    }
+
+    /**
+     * @param string|stdClass|Wildcard[] $data
+     * @param Wildcard[]                 $wildcards
      *
      * @return string|stdClass|mixed[]
      */
-    private function replaceFieldsWithConstraintExpression($actualStringOrObjectOrArray, array $replacements)
+    private function replaceFields($data, array $wildcards)
     {
-        if (is_string($actualStringOrObjectOrArray)) {
-            return $actualStringOrObjectOrArray;
+        if (is_string($data)) {
+            return $data;
         }
 
-        foreach ($replacements as $replacement) {
-            (new Accessor())->replace($actualStringOrObjectOrArray, $replacement);
+        foreach ($wildcards as $wildcard) {
+            (new Accessor())->replaceFields($data, $wildcard);
         }
 
-        return $actualStringOrObjectOrArray;
+        return $data;
     }
 
     /**

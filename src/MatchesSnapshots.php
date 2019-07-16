@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace KigaRoo\SnapshotTesting;
 
 use KigaRoo\SnapshotTesting\Driver\JsonDriver;
-use KigaRoo\SnapshotTesting\Replacement\Replacement;
+use KigaRoo\SnapshotTesting\Wildcard\Wildcard;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\ExpectationFailedException;
 use ReflectionClass;
@@ -22,7 +22,7 @@ use function sprintf;
 trait MatchesSnapshots
 {
     /** @var int */
-    private $snapshotIncrementor;
+    private $snapshotIncrementer;
 
     /** @var string[] */
     private $snapshotChanges = [];
@@ -30,9 +30,9 @@ trait MatchesSnapshots
     /**
      * @before
      */
-    public function setUpSnapshotIncrementor() : void
+    public function setUpSnapshotIncrementer() : void
     {
-        $this->snapshotIncrementor = 0;
+        $this->snapshotIncrementer = 0;
     }
 
     /**
@@ -61,11 +61,11 @@ trait MatchesSnapshots
     }
 
     /**
-     * @param Replacement[] $replacements
+     * @param Wildcard[] $wildcards
      */
-    public function assertMatchesJsonSnapshot(string $actual, array $replacements = []) : void
+    public function assertMatchesJsonSnapshot(string $actual, array $wildcards = []) : void
     {
-        $this->doSnapshotAssertion($actual, new JsonDriver(), $replacements);
+        $this->doSnapshotAssertion($actual, new JsonDriver(), $wildcards);
     }
 
     /**
@@ -77,17 +77,17 @@ trait MatchesSnapshots
      */
     abstract public function getName($withDataSet = true);
 
-    private function getSnapshotId() : string
+    private function getSnapshotId(): string
     {
         return sprintf(
             '%s__%s__%s',
             (new ReflectionClass($this))->getShortName(),
             $this->getName(),
-            $this->snapshotIncrementor
+            $this->snapshotIncrementer
         );
     }
 
-    private function getSnapshotDirectory() : string
+    private function getSnapshotDirectory(): string
     {
         $directoryName = dirname((new ReflectionClass($this))->getFileName());
 
@@ -101,23 +101,23 @@ trait MatchesSnapshots
      * Override this method it you want to use a different flag or mechanism
      * than `-d --update-snapshots`.
      */
-    private function shouldUpdateSnapshots() : bool
+    private function shouldUpdateSnapshots(): bool
     {
         return in_array('--update-snapshots', $_SERVER['argv'], true);
     }
 
     /**
-     * @param Replacement[] $replacements
+     * @param Wildcard[] $wildcards
      */
-    private function doSnapshotAssertion(string $actual, Driver $driver, array $replacements = []) : void
+    private function doSnapshotAssertion(string $actual, Driver $driver, array $wildcards = []): void
     {
-        $this->snapshotIncrementor++;
+        $this->snapshotIncrementer++;
 
-        $filesystem      = new Filesystem($this->getSnapshotDirectory());
+        $filesystem = new Filesystem($this->getSnapshotDirectory());
         $snapshotHandler = new SnapshotHandler($filesystem);
 
         $filename = $snapshotHandler->getFilename($this->getSnapshotId(), $driver);
-        $content  = '';
+        $content = '';
         if ($filesystem->has($filename)) {
             $content = $filesystem->read($filename);
         }
@@ -128,8 +128,8 @@ trait MatchesSnapshots
             $driver
         );
 
-        if (! $snapshotHandler->snapshotExists($snapshot)) {
-            $this->createSnapshotAndMarkTestIncomplete($snapshot, $actual, $replacements);
+        if (!$snapshotHandler->snapshotExists($snapshot)) {
+            $this->createSnapshotAndMarkTestIncomplete($snapshot, $actual);
         }
 
         if ($this->shouldUpdateSnapshots()) {
@@ -137,28 +137,22 @@ trait MatchesSnapshots
                 // We only want to update snapshots which need updating. If the snapshot doesn't
                 // match the expected output, we'll catch the failure, create a new snapshot and
                 // mark the test as incomplete.
-                $snapshot->assertMatches($actual, $replacements);
+                $snapshot->assertMatches($actual, $wildcards);
             } catch (ExpectationFailedException $exception) {
-                $this->updateSnapshotAndMarkTestIncomplete($snapshot, $actual, $replacements);
+                $this->updateSnapshotAndMarkTestIncomplete($snapshot, $actual);
             }
         }
 
         try {
-            $snapshot->assertMatches($actual, $replacements);
+            $snapshot->assertMatches($actual, $wildcards);
         } catch (ExpectationFailedException $exception) {
             $this->rethrowExpectationFailedExceptionWithUpdateSnapshotsPrompt($exception);
         }
     }
 
-    /**
-     * @param Replacement[] $replacements
-     */
-    private function createSnapshotAndMarkTestIncomplete(
-        Snapshot $snapshot,
-        string $actual,
-        array $replacements = []
-    ) : void {
-        $snapshot->update($actual, $replacements);
+    private function createSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual): void
+    {
+        $snapshot->update($actual);
 
         $snapshotFactory = new SnapshotHandler(new Filesystem($this->getSnapshotDirectory()));
         $snapshotFactory->writeToFilesystem($snapshot);
@@ -166,15 +160,9 @@ trait MatchesSnapshots
         $this->registerSnapshotChange(sprintf('Snapshot created for %s', $snapshot->getId()));
     }
 
-    /**
-     * @param Replacement[] $replacements
-     */
-    private function updateSnapshotAndMarkTestIncomplete(
-        Snapshot $snapshot,
-        string $actual,
-        array $replacements = []
-    ) : void {
-        $snapshot->update($actual, $replacements);
+    private function updateSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actual): void
+    {
+        $snapshot->update($actual);
 
         $snapshotFactory = new SnapshotHandler(new Filesystem($this->getSnapshotDirectory()));
         $snapshotFactory->writeToFilesystem($snapshot);
@@ -184,7 +172,7 @@ trait MatchesSnapshots
 
     private function rethrowExpectationFailedExceptionWithUpdateSnapshotsPrompt(
         ExpectationFailedException $exception
-    ) : void {
+    ): void {
         $newMessage = sprintf(
             '%s%s%s',
             $exception->getMessage(),
@@ -201,7 +189,7 @@ trait MatchesSnapshots
         throw $exception;
     }
 
-    private function registerSnapshotChange(string $message) : void
+    private function registerSnapshotChange(string $message): void
     {
         $this->snapshotChanges[] = $message;
     }

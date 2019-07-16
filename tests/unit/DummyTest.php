@@ -5,19 +5,20 @@ declare(strict_types=1);
 namespace Tests;
 
 use KigaRoo\SnapshotTesting\MatchesSnapshots;
-use KigaRoo\SnapshotTesting\Replacement\IntegerReplacement;
-use KigaRoo\SnapshotTesting\Replacement\UuidReplacement;
+use KigaRoo\SnapshotTesting\Wildcard\IntegerWildcard;
+use KigaRoo\SnapshotTesting\Wildcard\UuidWildcard;
 use PHPUnit\Framework\TestCase;
+use function json_encode;
 
 class DummyTest extends TestCase
 {
     use MatchesSnapshots;
 
-    public function testDummy()
+    public function testDummy() : void
     {
-
         $data = json_encode(
-            ['tests' =>
+            [
+                'tests' =>
              [
                  'id' => 'b84c9b7f-1ebb-49b6-9d18-4305932b2dd1',
                  'multiple' => [
@@ -25,11 +26,11 @@ class DummyTest extends TestCase
                      1 => 6665,
                      2 => 'c',
                  ],
-                 'ints' => [
+                 'integers' => [
                      123,
                      1234,
                      12345,
-                     123456
+                     123456,
                  ],
                  'objects' => [
                      ['id' => 123],
@@ -39,19 +40,19 @@ class DummyTest extends TestCase
                  'arrays' => [
                      [1,2,3],
                      [3,4,5],
-                 ]
+                 ],
              ],
             ]
         );
-        
-        $fieldConstraints = [
-            new UuidReplacement('tests.id'),
-            new IntegerReplacement('tests.multiple[1]'),
-            new IntegerReplacement('tests.ints[*]'),
-            new IntegerReplacement('tests.objects[*].id'), 
-            new IntegerReplacement('tests.arrays[*][2]'),
+
+        $wildcards = [
+            new UuidWildcard('tests.id'),
+            new IntegerWildcard('tests.multiple[1]'),
+            new IntegerWildcard('tests.integers[*]'),
+            new IntegerWildcard('tests.objects[*].id'),
+            new IntegerWildcard('tests.arrays[*][2]'),
         ];
 
-        $this->assertMatchesJsonSnapshot($data, $fieldConstraints);
+        $this->assertMatchesJsonSnapshot($data, $wildcards);
     }
 }

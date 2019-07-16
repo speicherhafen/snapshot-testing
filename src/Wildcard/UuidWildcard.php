@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace KigaRoo\SnapshotTesting\Replacement;
+namespace KigaRoo\SnapshotTesting\Wildcard;
 
 use InvalidArgumentException;
 use Webmozart\Assert\Assert;
 
-final class UuidReplacement implements Replacement
+final class UuidWildcard implements Wildcard
 {
     /** @var string */
     private $path;
@@ -20,14 +20,6 @@ final class UuidReplacement implements Replacement
     public function atPath() : string
     {
         return $this->path;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getValue()
-    {
-        return 'b84c9b7f-1ebb-49b6-9d18-4305932b2dd1';
     }
 
     /**
