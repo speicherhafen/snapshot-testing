@@ -56,3 +56,4 @@ This ignores the concrete uuid given for the field "id" and only checks that a v
 The library currently supports the following wildcards:
 - IntegerWildcard
 - UuidWildcard
+- DateTimeWildcard

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests;
 
 use KigaRoo\SnapshotTesting\MatchesSnapshots;
+use KigaRoo\SnapshotTesting\Wildcard\DateTimeWildcard;
 use KigaRoo\SnapshotTesting\Wildcard\IntegerWildcard;
 use KigaRoo\SnapshotTesting\Wildcard\UuidWildcard;
 use PHPUnit\Framework\TestCase;
@@ -41,6 +42,16 @@ class DummyTest extends TestCase
                      [1,2,3],
                      [3,4,5],
                  ],
+                 'dateTimes' => [
+                     [
+                         '2019-07-10T12:50:20+00:00',
+                         '2019-02-28T13:50:24+02:00',
+                     ],
+                     [
+                         '10.07.2019 12:30',
+                         '28.02.2019 08:15',
+                     ],
+                 ],
              ],
             ]
         );
@@ -51,6 +62,8 @@ class DummyTest extends TestCase
             new IntegerWildcard('tests.integers[*]'),
             new IntegerWildcard('tests.objects[*].id'),
             new IntegerWildcard('tests.arrays[*][2]'),
+            new DateTimeWildcard('tests.dateTimes[0][*]'),
+            new DateTimeWildcard('tests.dateTimes[1][*]', 'd.m.Y H:i'),
         ];
 
         $this->assertMatchesJsonSnapshot($data, $wildcards);
