@@ -27,14 +27,6 @@ final class DateTimeWildcard implements Wildcard
     }
 
     /**
-     * @return mixed
-     */
-    public function getValue()
-    {
-        return (new DateTime('2019-01-01'))->format($this->format);
-    }
-
-    /**
      * @param mixed $mixed
      */
     public function match($mixed) : bool
