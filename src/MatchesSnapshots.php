@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace KigaRoo\SnapshotTesting;
 
 use KigaRoo\SnapshotTesting\Driver\JsonDriver;
+use KigaRoo\SnapshotTesting\Driver\XmlDriver;
 use KigaRoo\SnapshotTesting\Wildcard\Wildcard;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\ExpectationFailedException;
@@ -66,6 +67,14 @@ trait MatchesSnapshots
     public function assertMatchesJsonSnapshot(string $actual, array $wildcards = []) : void
     {
         $this->doSnapshotAssertion($actual, new JsonDriver(), $wildcards);
+    }
+
+    /**
+     * @param Wildcard[] $wildcards
+     */
+    public function assertMatchesXmlSnapshot(string $actual, array $wildcards = []) : void
+    {
+        $this->doSnapshotAssertion($actual, new XmlDriver(), $wildcards);
     }
 
     /**
