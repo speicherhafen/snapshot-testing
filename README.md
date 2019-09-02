@@ -16,13 +16,20 @@ final class MyUnitTest extends TestCase
 {
     use MatchesSnapshots;
     
-    public function testMyCase()
+    public function testJson()
     {
         $myJsonData = json_encode([
             'foo' => 'bar',
         ]);
         
         $this->assertMatchesJsonSnapshot($myJsonData);
+    }    
+    
+    public function testXml()
+    {
+        $myXmlData = "<?xml version="1.0" encoding="UTF-8"?><root><id>7d644cc6-70fa-11e9-89e1-220d3e3a2561</id></root>";
+        
+        $this->assertMatchesXmlSnapshot($myJsonData);
     }
 }
 ```
@@ -37,7 +44,7 @@ final class MyUnitTest extends TestCase
 {
     use MatchesSnapshots;
     
-    public function testMyCase()
+    public function testJson()
     {
         $myJsonData = json_encode([
             'id' => '7d644cc6-70fa-11e9-89e1-220d3e3a2561',
@@ -45,6 +52,15 @@ final class MyUnitTest extends TestCase
         ]);
         
         $this->assertMatchesJsonSnapshot($myJsonData, [
+            new UuidWildcard('id'),
+        ]);
+    }    
+    
+    public function testXml()
+    {
+        $myXmlData = '<?xml version="1.0" encoding="UTF-8"?><root><id>7d644cc6-70fa-11e9-89e1-220d3e3a2561</id></root>';
+
+        $this->assertMatchesXmlSnapshot($myXmlData, [
             new UuidWildcard('id'),
         ]);
     }
@@ -57,3 +73,4 @@ The library currently supports the following wildcards:
 - IntegerWildcard
 - UuidWildcard
 - DateTimeWildcard
+- StringWildcard
