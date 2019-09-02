@@ -11,11 +11,11 @@ use KigaRoo\SnapshotTesting\Wildcard\UuidWildcard;
 use PHPUnit\Framework\TestCase;
 use function json_encode;
 
-class DummyTest extends TestCase
+class JsonTest extends TestCase
 {
     use MatchesSnapshots;
 
-    public function testDummy() : void
+    public function testJson() : void
     {
         $data = json_encode(
             [
@@ -48,8 +48,8 @@ class DummyTest extends TestCase
                          '2019-02-28T13:50:24+02:00',
                      ],
                      [
-                         '10.07.2019 12:30',
-                         '28.02.2019 08:15',
+                         '02.02.2012 12:12',
+                         '01.01.2011 11:11',
                      ],
                  ],
              ],

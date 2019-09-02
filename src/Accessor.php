@@ -50,6 +50,8 @@ final class Accessor
             } elseif ($substring[0] === '.') {
                 $subPath = mb_substr($substring, 1);
                 $this->assert($wildcard, $this->getValue($element, $subPath));
+            } elseif ($substring[0] === '[') {
+                $this->assert($wildcard, $this->getValue($element, $substring));
             } elseif (preg_match('#^\[[0-9]+\]#', $substring)) {
                 $this->assert($wildcard, $this->getValue($element, $substring));
             } else {
@@ -93,6 +95,8 @@ final class Accessor
             } elseif ($substring[0] === '.') {
                 $subPath = mb_substr($substring, 1);
                 $propertyAccessor->setValue($element, $subPath, Wildcard::REPLACEMENT);
+            } elseif ($substring[0] === '[') {
+                $propertyAccessor->setValue($element, $substring, Wildcard::REPLACEMENT);
             } elseif (preg_match('#^\[[0-9]+\]#', $substring)) {
                 $propertyAccessor->setValue($element, $substring, Wildcard::REPLACEMENT);
             } else {
