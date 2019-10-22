@@ -9,11 +9,11 @@ use function sprintf;
 
 final class WildcardMismatch extends Exception
 {
-    public function __construct(string $wildcard, string $path)
+    public function __construct(string $wildcard, string $path, $value)
     {
         $message = 'Wildcard "%s" at path "%s" could not be performed.
-                    Given value does not match the wildcards constraint.';
+                    Given value "%s" does not match the wildcards constraint.';
 
-        parent::__construct(sprintf($message, $wildcard, $path));
+        parent::__construct(sprintf($message, $wildcard, $path, var_export($value, true)));
     }
 }
