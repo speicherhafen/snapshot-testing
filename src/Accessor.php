@@ -39,7 +39,7 @@ final class Accessor
     /**
      * @param  mixed $data
      *
-     * @return array
+     * @return mixed[]
      */
     private function buildDataPaths(Wildcard $wildcard, $data) : array
     {
