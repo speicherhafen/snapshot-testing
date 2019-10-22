@@ -11,10 +11,10 @@ use stdClass;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use function explode;
-use function is_array;
-use function sprintf;
 use function get_class;
+use function is_array;
 use function is_string;
+use function sprintf;
 
 final class Accessor
 {
@@ -37,8 +37,8 @@ final class Accessor
     }
 
     /**
-     * @param  Wildcard $wildcard
-     * @param  mixed    $data
+     * @param  mixed $data
+     *
      * @return array
      */
     private function buildDataPaths(Wildcard $wildcard, $data) : array
