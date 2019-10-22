@@ -6,9 +6,16 @@ namespace KigaRoo\SnapshotTesting\Exception;
 
 use Exception;
 use function sprintf;
+use function var_export;
 
 final class WildcardMismatch extends Exception
 {
+    /**
+     * WildcardMismatch constructor.
+     * @param string $wildcard
+     * @param string $path
+     * @param mixed $value
+     */
     public function __construct(string $wildcard, string $path, $value)
     {
         $message = 'Wildcard "%s" at path "%s" could not be performed.
