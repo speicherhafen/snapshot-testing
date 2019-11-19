@@ -6,6 +6,7 @@ namespace Tests;
 
 use KigaRoo\SnapshotTesting\Exception\InvalidMappingPath;
 use KigaRoo\SnapshotTesting\MatchesSnapshots;
+use KigaRoo\SnapshotTesting\Wildcard\DateTimeOrNullWildcard;
 use KigaRoo\SnapshotTesting\Wildcard\DateTimeWildcard;
 use KigaRoo\SnapshotTesting\Wildcard\IntegerWildcard;
 use KigaRoo\SnapshotTesting\Wildcard\UuidWildcard;
@@ -26,17 +27,17 @@ class JsonTest extends TestCase
                  'id' => 'b84c9b7f-1ebb-49b6-9d18-4305932b2dd1',
                  'nested1' => [
                      0 => [
-                         'nested2' => [ 
+                         'nested2' => [
                              0 => ['int' => 2],
                              1 => ['int' => 3],
-                         ]
+                         ],
                      ],
                      1 => [
-                         'nested2' => [ 
+                         'nested2' => [
                              0 => ['int' => 4],
                              1 => ['int' => 5],
-                         ]
-                     ]
+                         ],
+                     ],
                  ],
                  'multiple' => [
                      0 => 'a',
@@ -68,6 +69,10 @@ class JsonTest extends TestCase
                          '01.01.2011 11:11',
                      ],
                  ],
+                 'dateTimeOrNull' => [
+                     '2019-07-10T12:50:20+00:00',
+                     null,
+                 ],
              ],
             ]
         );
@@ -81,6 +86,7 @@ class JsonTest extends TestCase
             new IntegerWildcard('tests.arrays[*][2]'),
             new DateTimeWildcard('tests.dateTimes[0][*]'),
             new DateTimeWildcard('tests.dateTimes[1][*]', 'd.m.Y H:i'),
+            new DateTimeOrNullWildcard('tests.dateTimeOrNull[*]'),
         ];
 
         $this->assertMatchesJsonSnapshot($data, $wildcards);
@@ -98,17 +104,17 @@ class JsonTest extends TestCase
                  'id' => 'b84c9b7f-1ebb-49b6-9d18-4305932b2dd1',
                  'nested1' => [
                      0 => [
-                         'nested2' => [ 
+                         'nested2' => [
                              0 => ['int' => 2],
                              1 => ['int' => 3],
-                         ]
+                         ],
                      ],
                      1 => [
-                         'nested2' => [ 
+                         'nested2' => [
                              0 => ['int' => 4],
                              1 => ['int' => 5],
-                         ]
-                     ]
+                         ],
+                     ],
                  ],
                  'multiple' => [
                      0 => 'a',
@@ -147,7 +153,7 @@ class JsonTest extends TestCase
         $this->assertMatchesJsonSnapshot($data, [$wildcard]);
     }
 
-    public function provideFail(): array 
+    public function provideFail() : array
     {
         return [
             [new IntegerWildcard('tests.nested0[*].nested2[*].int')],

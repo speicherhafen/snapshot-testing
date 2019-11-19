@@ -73,4 +73,5 @@ The library currently supports the following wildcards:
 - IntegerWildcard
 - UuidWildcard
 - DateTimeWildcard
+- DateTimeOrNullWildcard
 - StringWildcard
