@@ -70,6 +70,7 @@ final class MyUnitTest extends TestCase
 This ignores the concrete uuid given for the field "id" and only checks that a valid uuid is provided.
 
 The library currently supports the following wildcards:
+- BooleanWildcard
 - IntegerWildcard
 - UuidWildcard
 - DateTimeWildcard
