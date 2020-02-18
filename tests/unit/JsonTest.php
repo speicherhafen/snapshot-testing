@@ -6,6 +6,7 @@ namespace Tests;
 
 use KigaRoo\SnapshotTesting\Exception\InvalidMappingPath;
 use KigaRoo\SnapshotTesting\MatchesSnapshots;
+use KigaRoo\SnapshotTesting\Wildcard\BooleanWildcard;
 use KigaRoo\SnapshotTesting\Wildcard\DateTimeOrNullWildcard;
 use KigaRoo\SnapshotTesting\Wildcard\DateTimeWildcard;
 use KigaRoo\SnapshotTesting\Wildcard\IntegerWildcard;
@@ -50,6 +51,11 @@ class JsonTest extends TestCase
                      12345,
                      123456,
                  ],
+                 'booleans' => [
+                     true,
+                     true,
+                     false,
+                 ],
                  'objects' => [
                      ['id' => 123],
                      ['id' => 234],
@@ -82,6 +88,7 @@ class JsonTest extends TestCase
             new UuidWildcard('tests.id'),
             new IntegerWildcard('tests.multiple[1]'),
             new IntegerWildcard('tests.integers[*]'),
+            new BooleanWildcard('tests.booleans[*]'),
             new IntegerWildcard('tests.objects[*].id'),
             new IntegerWildcard('tests.arrays[*][2]'),
             new DateTimeWildcard('tests.dateTimes[0][*]'),
