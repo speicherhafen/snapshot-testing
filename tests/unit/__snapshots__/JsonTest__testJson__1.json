@@ -34,6 +34,11 @@
             12345,
             123456
         ],
+        "booleans": [
+            true,
+            true,
+            false
+        ],
         "objects": [
             {
                 "id": 123
