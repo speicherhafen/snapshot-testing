@@ -77,7 +77,7 @@ trait MatchesSnapshots
         $this->doSnapshotAssertion($actual, new XmlDriver(), $wildcards);
     }
 
-    /*
+    /**
      * Determines whether or not the snapshot should be created instead of
      * matched.
      *
