@@ -88,7 +88,7 @@ trait MatchesSnapshots
     {
         return ! in_array('--without-creating-snapshots', $_SERVER['argv'], true);
     }
-    
+
     /**
      * // phpcs:disable
      * @param bool $withDataSet
@@ -151,7 +151,7 @@ trait MatchesSnapshots
 
         if (!$snapshotHandler->snapshotExists($snapshot)) {
             $this->assertSnapshotShouldBeCreated($filename);
-            
+
             $this->createSnapshotAndMarkTestIncomplete($snapshot, $actual);
         }
 
