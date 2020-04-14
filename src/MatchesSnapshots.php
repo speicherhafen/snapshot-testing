@@ -84,7 +84,7 @@ trait MatchesSnapshots
      * Override this method if you want to use a different flag or mechanism
      * than `-d --without-creating-snapshots`.
      */
-    protected function shouldCreateSnapshots(): bool
+    protected function shouldCreateSnapshots() : bool
     {
         return ! in_array('--without-creating-snapshots', $_SERVER['argv'], true);
     }
