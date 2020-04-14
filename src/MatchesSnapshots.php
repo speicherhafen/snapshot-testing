@@ -77,6 +77,18 @@ trait MatchesSnapshots
         $this->doSnapshotAssertion($actual, new XmlDriver(), $wildcards);
     }
 
+    /*
+     * Determines whether or not the snapshot should be created instead of
+     * matched.
+     *
+     * Override this method if you want to use a different flag or mechanism
+     * than `-d --without-creating-snapshots`.
+     */
+    protected function shouldCreateSnapshots(): bool
+    {
+        return ! in_array('--without-creating-snapshots', $_SERVER['argv'], true);
+    }
+    
     /**
      * // phpcs:disable
      * @param bool $withDataSet
@@ -138,6 +150,8 @@ trait MatchesSnapshots
         );
 
         if (!$snapshotHandler->snapshotExists($snapshot)) {
+            $this->assertSnapshotShouldBeCreated($filename);
+            
             $this->createSnapshotAndMarkTestIncomplete($snapshot, $actual);
         }
 
@@ -201,5 +215,18 @@ trait MatchesSnapshots
     private function registerSnapshotChange(string $message): void
     {
         $this->snapshotChanges[] = $message;
+    }
+
+    protected function assertSnapshotShouldBeCreated(string $snapshotFileName): void
+    {
+        if ($this->shouldCreateSnapshots()) {
+            return;
+        }
+
+        $this->fail(
+            "Snapshot \"$snapshotFileName\" does not exist.\n".
+            'You can automatically create it by removing '.
+            '`-d --without-creating-snapshots` of PHPUnit\'s CLI arguments.'
+        );
     }
 }
