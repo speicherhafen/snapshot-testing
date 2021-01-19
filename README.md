@@ -73,6 +73,7 @@ The library currently supports the following wildcards:
 - BooleanWildcard
 - IntegerWildcard
 - UuidWildcard
+- UuidOrNullWildcard
 - DateTimeWildcard
 - DateTimeOrNullWildcard
 - StringWildcard
