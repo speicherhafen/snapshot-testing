@@ -9,7 +9,6 @@ use KigaRoo\SnapshotTesting\Driver;
 use KigaRoo\SnapshotTesting\Exception\CantBeSerialized;
 use KigaRoo\SnapshotTesting\Wildcard\Wildcard;
 use PHPUnit\Framework\Assert;
-use stdClass;
 use const PHP_EOL;
 use function is_string;
 use function json_encode;
@@ -44,7 +43,7 @@ final class CsvDriver implements Driver
         $csvString = stream_get_contents($handle);
         assert(is_string($csvString));
 
-        return $csvString.PHP_EOL;
+        return $csvString . PHP_EOL;
     }
 
     public function extension(): string
@@ -71,10 +70,10 @@ final class CsvDriver implements Driver
     }
 
     /**
-     * @param string|stdClass|Wildcard[] $data
+     * @param string[][] $data
      * @param Wildcard[]                 $wildcards
      */
-    private function assertFields($data, array $wildcards): void
+    private function assertFields(array $data, array $wildcards): void
     {
         if (is_string($data)) {
             return;

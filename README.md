@@ -30,6 +30,26 @@ final class MyUnitTest extends TestCase
         $myXmlData = "<?xml version="1.0" encoding="UTF-8"?><root><id>7d644cc6-70fa-11e9-89e1-220d3e3a2561</id></root>";
         
         $this->assertMatchesXmlSnapshot($myJsonData);
+    }    
+    
+    public function testCsv()
+    {
+        $myCsvData = <<<CSV
+"foo bar";123
+"foo bar";456
+"foo bar";789
+CSV;
+        $this->assertMatchesCsvSnapshot($myCsvData);
+    }    
+    
+    public function testCsvVariant()
+    {
+        $myCsvData = <<<CSV
+'foo bar',123
+'foo bar',456
+'foo bar',789
+CSV;
+        $this->assertMatchesCsvSnapshot($myCsvData, [], ',', "'");
     }
 }
 ```
@@ -64,6 +84,18 @@ final class MyUnitTest extends TestCase
             new UuidWildcard('id'),
         ]);
     }
+    
+    public function testCsv()
+    {
+        $myCsvData = <<<CSV
+"7d644cc6-70fa-11e9-89e1-220d3e3a2561";123
+"7d644cc6-70fa-11e9-89e1-220d3e3a2561";456
+"7d644cc6-70fa-11e9-89e1-220d3e3a2561";789
+CSV;
+        $this->assertMatchesCsvSnapshot($myCsvData, [
+            new UuidWildcard('[*][0]'),
+        ]);
+    }    
 }
 ```
 
