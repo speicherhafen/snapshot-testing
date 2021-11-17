@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KigaRoo\SnapshotTesting;
 
+use KigaRoo\SnapshotTesting\Driver\CsvDriver;
 use KigaRoo\SnapshotTesting\Driver\JsonDriver;
 use KigaRoo\SnapshotTesting\Driver\XmlDriver;
 use KigaRoo\SnapshotTesting\Wildcard\Wildcard;
@@ -75,6 +76,14 @@ trait MatchesSnapshots
     public function assertMatchesXmlSnapshot(string $actual, array $wildcards = []) : void
     {
         $this->doSnapshotAssertion($actual, new XmlDriver(), $wildcards);
+    }
+    
+    /**
+     * @param Wildcard[] $wildcards
+     */
+    public function assertMatchesCsvSnapshot(string $actual, array $wildcards = [], string $fieldSeparator = ';', string $fieldEnclosure = '"') : void
+    {
+        $this->doSnapshotAssertion($actual, new CsvDriver($fieldSeparator, $fieldEnclosure), $wildcards);
     }
 
     /**
