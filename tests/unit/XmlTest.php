@@ -9,7 +9,7 @@ use KigaRoo\SnapshotTesting\Wildcard\DateTimeWildcard;
 use KigaRoo\SnapshotTesting\Wildcard\StringWildcard;
 use PHPUnit\Framework\TestCase;
 
-class XmlTest extends TestCase
+final class XmlTest extends TestCase
 {
     use MatchesSnapshots;
 

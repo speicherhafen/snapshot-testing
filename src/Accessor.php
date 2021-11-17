@@ -37,7 +37,7 @@ final class Accessor
     }
 
     /**
-     * @param  mixed $data
+     * @param mixed $data
      *
      * @return mixed[]
      */
@@ -47,7 +47,11 @@ final class Accessor
         $dataPaths = ['' => $data];
         foreach ($paths as $k => $path) {
             foreach ($dataPaths as $checkPath => $pathData) {
-                $elements = $this->getValue($data, $checkPath . $path);
+                if ('' === $checkPath . $path) {
+                    $elements = $pathData;
+                } else {
+                    $elements = $this->getValue($data, $checkPath . $path);
+                }
                 unset($dataPaths[$checkPath]);
                 if (is_array($elements)) {
                     foreach ($elements as $n => $element) {

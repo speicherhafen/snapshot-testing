@@ -15,7 +15,7 @@ use KigaRoo\SnapshotTesting\Wildcard\Wildcard;
 use PHPUnit\Framework\TestCase;
 use function json_encode;
 
-class JsonTest extends TestCase
+final class JsonTest extends TestCase
 {
     use MatchesSnapshots;
 
