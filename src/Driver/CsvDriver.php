@@ -16,10 +16,14 @@ use function json_encode;
 
 final class CsvDriver implements Driver
 {
-    /** @var string */
+    /**
+     * @var string 
+     */
     private $fieldSeparator;
     
-    /** @var string */
+    /**
+     * @var string 
+     */
     private $fieldEnclosure;
 
     public function __construct(string $fieldSeparator, string $fieldEnclosure)
@@ -82,17 +86,11 @@ final class CsvDriver implements Driver
     }
 
     /**
-     * @param string|stdClass|Wildcard[] $data
-     * @param Wildcard[]                 $wildcards
-     *
-     * @return string|stdClass|mixed[]
+     * @param string[][] $data
+     * @param Wildcard[] $wildcards
      */
-    private function replaceFields($data, array $wildcards)
+    private function replaceFields(array $data, array $wildcards): array
     {
-        if (is_string($data)) {
-            return $data;
-        }
-
         foreach ($wildcards as $wildcard) {
             (new Accessor())->replaceFields($data, $wildcard);
         }
@@ -101,13 +99,11 @@ final class CsvDriver implements Driver
     }
 
     /**
-     * @return string|object|mixed[]
-     *
      * @throws CantBeSerialized
      */
-    private function decode(string $data)
+    private function decode(string $data): array
     {
-        $lines = preg_split('/\r\n|\r|\n/', $data);;
+        $lines = preg_split('/\r\n|\r|\n/', $data);
         if ($lines === false) {
             throw new CantBeSerialized('Given string does not contain valid csv.');
         }

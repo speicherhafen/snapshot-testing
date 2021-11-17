@@ -47,7 +47,7 @@ final class Accessor
         $dataPaths = ['' => $data];
         foreach ($paths as $k => $path) {
             foreach ($dataPaths as $checkPath => $pathData) {
-                if('' === $checkPath . $path) {
+                if ('' === $checkPath . $path) {
                     $elements = $pathData;
                 } else {
                     $elements = $this->getValue($data, $checkPath . $path);
