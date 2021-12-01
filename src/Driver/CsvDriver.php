@@ -48,7 +48,7 @@ final class CsvDriver implements Driver
 
     public function extension(): string
     {
-        return 'json';
+        return 'csv';
     }
 
     /**
