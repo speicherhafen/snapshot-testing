@@ -5,7 +5,10 @@
     "license": "MIT",
     "minimum-stability": "stable",
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     },
     "autoload": {
         "psr-4": {
@@ -17,11 +20,11 @@
     },
     "require": {
         "php": "^7.1",
-        "ext-json": "*",
         "ext-dom": "*",
-        "ext-simplexml": "*",
+        "ext-json": "*",
         "ext-mbstring": "*",
-        "phpunit/phpunit": "~6.5",
+        "ext-simplexml": "*",
+        "phpunit/phpunit": "^9.0",
         "symfony/filesystem": "~2.8|~3.0|~4.0",
         "symfony/property-access": "~2.8|~3.0|~4.0",
         "webmozart/assert": "~1.2"
