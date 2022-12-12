@@ -5,7 +5,10 @@
     "license": "MIT",
     "minimum-stability": "stable",
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": false
+        }
     },
     "autoload": {
         "psr-4": {
@@ -21,7 +24,7 @@
         "ext-dom": "*",
         "ext-simplexml": "*",
         "ext-mbstring": "*",
-        "phpunit/phpunit": "~6.5",
+        "phpunit/phpunit": "^7.5",
         "symfony/filesystem": "~2.8|~3.0|~4.0",
         "symfony/property-access": "~2.8|~3.0|~4.0",
         "webmozart/assert": "~1.2"
