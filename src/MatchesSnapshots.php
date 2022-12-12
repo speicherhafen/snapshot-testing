@@ -98,14 +98,7 @@ trait MatchesSnapshots
         return ! in_array('--without-creating-snapshots', $_SERVER['argv'], true);
     }
 
-    /**
-     * // phpcs:disable
-     * @param bool $withDataSet
-     *
-     * @return string
-     * // phpcs:disable
-     */
-    abstract public function getName($withDataSet = true);
+    abstract public function getName(bool $withDataSet = true): string;
 
     private function getSnapshotId(): string
     {
