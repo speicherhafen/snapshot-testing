@@ -98,7 +98,7 @@ trait MatchesSnapshots
         return ! in_array('--without-creating-snapshots', $_SERVER['argv'], true);
     }
 
-    abstract public function getName(bool $withDataSet = true): string;
+    abstract public function getName(bool $withDataSet = true): ?string;
 
     private function getSnapshotId(): string
     {
