@@ -72,7 +72,7 @@ final class Accessor
      *
      * @throws InvalidMappingPath
      */
-    public function replaceFields($data, Wildcard $wildcard) : void
+    public function replaceFields(&$data, Wildcard $wildcard) : void
     {
         if (is_string($data)) {
             return;
