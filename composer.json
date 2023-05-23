@@ -20,11 +20,11 @@
     },
     "require": {
         "php": "^7.1",
-        "ext-json": "*",
         "ext-dom": "*",
-        "ext-simplexml": "*",
+        "ext-json": "*",
         "ext-mbstring": "*",
-        "phpunit/phpunit": "^7.5",
+        "ext-simplexml": "*",
+        "phpunit/phpunit": "^7.5|^8.0|^9.0",
         "symfony/filesystem": "~2.8|~3.0|~4.0",
         "symfony/property-access": "~2.8|~3.0|~4.0",
         "webmozart/assert": "~1.2"
