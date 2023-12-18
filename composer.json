@@ -19,7 +19,7 @@
         "psr-4": { "Tests\\": ["tests/unit"] }
     },
     "require": {
-        "php": "^7.1",
+        "php": ">=7.1",
         "ext-dom": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
