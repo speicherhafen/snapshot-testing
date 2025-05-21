@@ -57,7 +57,7 @@ final class Accessor
                     foreach ($elements as $n => $element) {
                         $dataPaths[sprintf('%s%s[%s]', $checkPath, $path, $n)] = $element;
                     }
-                } else {
+                } elseif (!is_null($elements)) {
                     $finalPath             = sprintf('%s%s', $checkPath, $path);
                     $dataPaths[$finalPath] = $this->getValue($data, $finalPath);
                 }
