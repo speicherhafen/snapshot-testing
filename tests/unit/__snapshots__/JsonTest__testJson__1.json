@@ -39,6 +39,12 @@
             true,
             false
         ],
+        "float": 3.2,
+        "floats": [
+            2.2,
+            1.4,
+            3.1
+        ],
         "objects": [
             {
                 "id": 123
