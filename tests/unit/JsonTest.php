@@ -11,6 +11,7 @@ use KigaRoo\SnapshotTesting\Wildcard\DateTimeOrNullWildcard;
 use KigaRoo\SnapshotTesting\Wildcard\DateTimeWildcard;
 use KigaRoo\SnapshotTesting\Wildcard\FloatWildcard;
 use KigaRoo\SnapshotTesting\Wildcard\IntegerWildcard;
+use KigaRoo\SnapshotTesting\Wildcard\IntOrFloatWildcard;
 use KigaRoo\SnapshotTesting\Wildcard\UuidWildcard;
 use KigaRoo\SnapshotTesting\Wildcard\Wildcard;
 use PHPUnit\Framework\TestCase;
@@ -60,8 +61,15 @@ final class JsonTest extends TestCase
                         'float' => 3.2,
                         'floats' => [
                             2.2,
-                            1.4,
-                            3.1,
+                            .4,
+                            0.1,
+                        ],
+                        'intOrFloat' => [
+                            2.2,
+                            .0,
+                            0.0,
+                            3,
+                            .72,
                         ],
                         'objects' => [
                             ['id' => 123],
@@ -98,6 +106,7 @@ final class JsonTest extends TestCase
             new BooleanWildcard('tests.booleans[*]'),
             new FloatWildcard('tests.float'),
             new FloatWildcard('tests.floats[*]'),
+            new IntOrFloatWildcard('tests.intOrFloat[*]'),
             new IntegerWildcard('tests.objects[*].id'),
             new IntegerWildcard('tests.arrays[*][2]'),
             new DateTimeWildcard('tests.dateTimes[0][*]'),
