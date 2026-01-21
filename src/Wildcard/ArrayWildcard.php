@@ -26,6 +26,6 @@ final class ArrayWildcard implements Wildcard
      */
     public function match($mixed) : bool
     {
-        return is_array($mixed);
+        return is_array(json_decode(json_encode($mixed), true));
     }
 }
