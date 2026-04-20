@@ -178,7 +178,7 @@ final class JsonTest extends TestCase
         $this->assertMatchesJsonSnapshot($data, [$wildcard]);
     }
 
-    public function provideFail() : array
+    public static function provideFail() : array
     {
         return [
             [new IntegerWildcard('tests.nested0[*].nested2[*].int')],
