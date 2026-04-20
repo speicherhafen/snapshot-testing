@@ -30,6 +30,6 @@
     },
     "require-dev": {
         "doctrine/coding-standard": "~6.0|~8.0",
-        "phpunit/phpunit": "^9.6"
+        "phpunit/phpunit": "^10.5"
     }
 }
