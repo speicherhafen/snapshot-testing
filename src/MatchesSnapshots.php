@@ -103,7 +103,7 @@ trait MatchesSnapshots
         return sprintf(
             '%s__%s__%s',
             (new ReflectionClass($this))->getShortName(),
-            $this->name(),
+            $this->nameWithDataSet(),
             $this->snapshotIncrementer
         );
     }
